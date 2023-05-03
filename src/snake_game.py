@@ -106,11 +106,3 @@ class SnakeGame:
             self._update_board(self.action)    
 
         pygame.quit()
-
-
-def main():
-    game = SnakeGame()
-    game.start()
-
-if __name__ == '__main__':
-    main()
