@@ -2,14 +2,18 @@ import torch
 from numpy.random import random_sample
 import matplotlib.pyplot as plt
 
+
+def sliding_list_average(list, sliding_window=150):
+    return [sum(list[max(0,i-sliding_window):i])/sliding_window for i in range(len(list))]
+
 class RlTrainer:
     def __init__(self, env, dnn, learning_rate=0.0001):
         self.env = env
         self.dnn = dnn
 
-        self.episodes = 4000
-        self.batch_size = 128
-        self.epsilon = 0.5
+        self.episodes = 10_000
+        self.batch_size = 256
+        self.epsilon = 0.3
         self._init_optimizer(learning_rate)
 
     def _init_optimizer(self, learning_rate):
@@ -25,7 +29,7 @@ class RlTrainer:
         self.scores = [0]*self.episodes
 
     def _update_epsilon(self):
-        self.epsilon = min(round(min(1, self.epsilon + 0.001), 3), 0.95)
+        self.epsilon = min(round(min(1, self.epsilon + 0.0001), 4), 0.9)
 
     def _sample_action(self, states):
         states_tensor = torch.tensor(states).float().flatten().unsqueeze(0)
@@ -49,6 +53,7 @@ class RlTrainer:
 
         figure, axes = plt.subplots(2)
         axes[0].plot(list(range(episode)), self.movements_count[:episode], label="Movements")
+        axes[0].plot(list(range(episode)), sliding_list_average(self.movements_count[:episode]), label="Average Movements")
         axes[0].set_title("Movements per episode")
         axes[1].plot(list(range(episode)), self.scores[:episode], label="Score")
         axes[1].set_title("Score per episode")
