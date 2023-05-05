@@ -15,9 +15,11 @@ class SnakeEnv(gym.Env):
     def __init__(self, board_size = 350):
         super(SnakeEnv, self).__init__()
         self.board_size = board_size
+        self.score = 0
         self.game = SnakeGame(board_size=board_size)
         self.action_space = gym.spaces.Discrete(4)        
-        self._update_observation_space
+        self._update_observation_space()
+        
 
     def _update_observation_space(self):
         snake_position, snake_body, food_position = self.game.get_elements_space()
@@ -27,19 +29,25 @@ class SnakeEnv(gym.Env):
         self.observation_space[snake_position[0], snake_position[1]] = 1
         self.observation_space[food_position[0], food_position[1]] = 2
 
-    def _compute_reward(self, snake_position, food_position):
-        return np.array(self.board_size - (snake_position[0]-food_position[0] + snake_position[1]-food_position[1])/2)
-
+    def _compute_reward(self, score, done):
+        if done:
+            return -10
+        elif score > self.score:
+            self.score = score
+            return 10
+        else:
+            return 0
 
     def reset(self):
         self.game.reset()
+        self.score = 0
         self._update_observation_space()
         return self.observation_space
 
     def step(self, action):
-        states, _, _, _, done = self.game.step(self.ACTIONS_DICT[action])
+        states, score, _, _, done = self.game.step(self.ACTIONS_DICT[action])
         snake_position, _, food_position = self.game.get_elements_space()
-        return self.observation_space, self._compute_reward(states[0], states[2]), _, _, done
+        return self.observation_space, self._compute_reward(score, done), _, _, done
 
     def render(self):
         self.game.render()
