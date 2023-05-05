@@ -11,10 +11,13 @@ class SnakeGame:
         self.board_size = board_size
         self.display = display
         self.pixel_size = 10
+        self.reset()
+
+    def reset(self):
         if self.display:
             self._init_board()
         self._init_elements()
-        self._init_rewards()
+        self._init_score()
 
     def _init_board(self):
         pygame.init()
@@ -27,10 +30,13 @@ class SnakeGame:
         self.snake_body = [[100,50], [90, 50], [80, 50]]
 
         self.action = "RIGHT"
-        self.done = True
+        self.done = False
         self._update_position_food()
+
+    def get_elements_space(self):
+        return self.snake_position, self.snake_body, self.food_position       
         
-    def _init_rewards(self):
+    def _init_score(self):
         self.score = 0
 
     def _update_position_food(self):
@@ -41,7 +47,7 @@ class SnakeGame:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.done = False
+                self.done = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT and self.action!="LEFT":
                     self.action = "RIGHT"
@@ -84,11 +90,11 @@ class SnakeGame:
     def _update_game_status(self):
 
         if self.snake_position[0] < 0 or self.snake_position[0] > self.board_size-self.pixel_size:
-            self.done = False
+            self.done = True
         if self.snake_position[1] < 0 or self.snake_position[1] > self.board_size-self.pixel_size:
-            self.done = False
+            self.done = True
         if self.snake_position in self.snake_body[1:]:
-            self.done = False
+            self.done = True
 
     def _update_board(self, action):
 
@@ -100,7 +106,7 @@ class SnakeGame:
 
     def start(self):
         
-        while self.done:
+        while not self.done:
             
             self._register_actions()
             self._update_board(self.action)    
