@@ -17,17 +17,15 @@ class SnakeEnv(gym.Env):
         self.board_size = board_size
         self.game = SnakeGame(board_size=board_size)
         self.action_space = gym.spaces.Discrete(4)        
-        self._init_observation_space()
-
-    def _init_observation_space(self):
-        self.observation_space = -np.ones((self.board_size, self.board_size), dtype=np.int8)
-        self._update_observation_space()
+        self._update_observation_space
 
     def _update_observation_space(self):
-        _, snake_body, food_position = self.game.get_elements_space()
-        for snake_point in snake_body:
+        snake_position, snake_body, food_position = self.game.get_elements_space()
+        self.observation_space = -np.ones((self.board_size, self.board_size), dtype=np.int8)
+        for snake_point in snake_body[1:]:
             self.observation_space[snake_point[0], snake_point[1]] = 0
-        self.observation_space[food_position[0], food_position[1]] = 1
+        self.observation_space[snake_position[0], snake_position[1]] = 1
+        self.observation_space[food_position[0], food_position[1]] = 2
 
     def _compute_reward(self, snake_position, food_position):
         return np.array(self.board_size - (snake_position[0]-food_position[0] + snake_position[1]-food_position[1])/2)
@@ -35,7 +33,7 @@ class SnakeEnv(gym.Env):
 
     def reset(self):
         self.game.reset()
-        self._init_observation_space()
+        self._update_observation_space()
         return self.observation_space
 
     def step(self, action):
