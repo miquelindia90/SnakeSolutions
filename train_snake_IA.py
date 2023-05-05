@@ -1,15 +1,14 @@
 from src.snake_env import SnakeEnv
+from src.dnn import DNN
+from src.rl_trainer import RlTrainer
+
 
 def main():
 
     env = SnakeEnv()
-    states = env.reset()
-    done = False
-    while not done:
-        #states, reward, _, _, done = env.step(env.action_space.sample())
-        states, reward, _, _, done = env.step(0)
-        print(reward, done)
-        env.render()
+    dnn =  DNN(24, 4, 24)
+    trainer = RlTrainer(env, dnn)
+    trainer.train()
 
 if __name__ == '__main__':
     main()
