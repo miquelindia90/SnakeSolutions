@@ -76,6 +76,14 @@ class SnakeGame:
         else:
             self.snake_body.pop()
 
+    def render(self):
+        self._update_display()
+
+    def step(self, action):
+        self._update_board_elements(action)
+        self._update_game_status()
+        return self.get_elements_space(), self.score, False, False, self.done
+    
     def _update_display(self):
 
         self.game_surface.fill((0,0,0))
