@@ -31,12 +31,12 @@ class SnakeEnv(gym.Env):
 
     def _compute_reward(self, score, done):
         if done:
-            return -10
+            return -20
         elif score > self.score:
             self.score = score
-            return 10
+            return 20
         else:
-            return 0
+            return 0.1
 
     def reset(self):
         self.game.reset()
