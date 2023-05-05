@@ -7,8 +7,8 @@ class RlTrainer:
         self.env = env
         self.dnn = dnn
 
-        self.episodes = 1000
-        self.batch_size = 32
+        self.episodes = 4000
+        self.batch_size = 64
         self.epsilon = 0.5
         self._init_optimizer(learning_rate)
 
@@ -39,17 +39,30 @@ class RlTrainer:
     
     def _update_weights(self):
 
+        self.loss /= self.batch_size
         self.loss.backward()
         self.optimizer.step()
         self.optimizer.zero_grad()
         self.loss = 0
 
+    def _create_metrics_plot(self, episode):
+
+        figure, axes = plt.subplots(2)
+        axes[0].plot(list(range(episode)), self.movements_count[:episode], label="Movements")
+        axes[0].set_title("Movements per episode")
+        axes[1].plot(list(range(episode)), self.scores[:episode], label="Score")
+        axes[1].set_title("Score per episode")
+
+        for ax in axes:
+            ax.label_outer()
+        plt.savefig("logs/Movements.png")
+        figure.clf()
+
     def _log_metrics(self, episode, movements_count, score):
         self.movements_count[episode] = movements_count
         self.scores[episode] = score
-        if episode % 10 == 0:
-            plt.plot(list(range(episode)), self.movements_count[:episode], label="Movements")
-            plt.savefig("Movements.png")
+        if episode % 200 == 0:
+            self._create_metrics_plot(episode)
 
     def _train_episode(self):
 
@@ -59,7 +72,7 @@ class RlTrainer:
         while not done:
             action, dnn_logits = self._sample_action(states)
             states, reward, _, _, done = self.env.step(action)
-            self.env.render()
+            #self.env.render()
             self.loss += self._compute_loss(action, dnn_logits, reward)
             self.batch_count += 1
             movements_count += 1
