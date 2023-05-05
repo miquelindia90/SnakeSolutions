@@ -17,14 +17,25 @@ class DNN(nn.Module):
 
     def _init_layers(self):
         '''Initialize the layers.'''
-        self.nn1 = nn.Linear(self.input_size, self.hidden_size)
-        self.nn2 = nn.Linear(self.hidden_size, self.output_size)
+        self.fc1 = nn.Linear(6, self.hidden_size)
+        self.lstm = nn.LSTM(2, self.hidden_size, batch_first=True)
+        self.fc2 = nn.Linear(self.hidden_size*2, self.hidden_size)
+        self.fc3 = nn.Linear(self.hidden_size, self.output_size)
 
-    def forward(self, x: torch.tensor):
+    def forward(self, observation_space: torch.tensor,
+                food_distance: torch.tensor,
+                board_limits_distance: torch.tensor,
+                snake_body: torch.tensor,
+                ) -> torch.tensor:
         '''Compute the forward pass.
-        Args: x (torch.tensor): Input tensor
-        Returns: torch.tensor: Output tensor
+        Args: observation_space (torch.tensor): Observation space
+              food_distance (torch.tensor): Distance from the snake head to the food
+        Returns: torch.tensor: DNN logits
         '''
-        x = torch.relu(self.nn1(x))
-        x = self.nn2(x)
+        x = torch.cat([food_distance, board_limits_distance], dim=1)
+        x = torch.relu(self.fc1(x))
+        _, [y,_] = self.lstm(snake_body)
+        x = torch.relu(self.fc2(torch.cat([x, y.squeeze(1)], dim=1)))
+        x = self.fc3(x)
+
         return torch.softmax(x, dim=1)

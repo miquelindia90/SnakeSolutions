@@ -23,8 +23,9 @@ class RlTrainer:
         self.env = env
         self.dnn = dnn
 
-        self.episodes = 10_000
-        self.batch_size = 256
+        self.episodes = 100_000
+        self.plot_frequency = self.episodes//20
+        self.batch_size = 512
         self.epsilon = 0.5
         self._init_optimizer(learning_rate)
 
@@ -44,15 +45,34 @@ class RlTrainer:
 
     def _update_epsilon(self):
         '''Update the epsilon value.'''
-        self.epsilon = min(round(min(1, self.epsilon + 0.0002), 4), 0.9)
+        self.epsilon = min(round(min(1, self.epsilon + 0.0001), 4), 0.9)
 
+    def _compute_food_distance_tensor(self, snake_position: list, food_position: list) -> torch.Tensor:
+        '''Compute a tensor that contains the distance from the snake head to the food.
+        Args: snake_position (list): Snake position
+              food_position (list): Food position
+        Returns: torch.Tensor: Distance from the snake head to the food
+        '''
+        return torch.tensor([abs(snake_position[0] - food_position[0]), abs(snake_position[1] - food_position[1])]).float().unsqueeze(0)
+    
+    def _compute_board_limits_distance_tensor(self, snake_position: list) -> torch.Tensor:
+        '''Compute a tensor that contains the distance from the snake head to the board limits.
+        Args: snake_position (list): Snake position
+        Returns: torch.Tensor: Distance from the snake head to the board limits
+        '''
+        return torch.tensor([snake_position[0], self.env.board_size-snake_position[0], snake_position[1], self.env.board_size-snake_position[1]]).float().unsqueeze(0)
+         
     def _sample_action(self, states: list) -> tuple[int, torch.Tensor]:
         '''Sample an action from the DNN or randomly.
         Args: states (list): List of states
         Returns: tuple[int, torch.Tensor]: Action and the DNN logits
         '''
-        states_tensor = torch.tensor(states).float().flatten().unsqueeze(0)
-        dnn_logits = self.dnn(states_tensor)
+        observation_space, snake_position, snake_body, food_position = states
+        observation_space_tensor = torch.tensor(observation_space).float().flatten().unsqueeze(0)
+        food_distance_tensor = self._compute_food_distance_tensor(snake_position=snake_position, food_position=food_position)
+        board_limits_distance_tensor = self._compute_board_limits_distance_tensor(snake_position=snake_position)
+        snake_body_tensor = torch.tensor(snake_body).float().unsqueeze(0)
+        dnn_logits = self.dnn(observation_space_tensor, food_distance_tensor, board_limits_distance_tensor, snake_body_tensor)
         action = torch.argmax(dnn_logits).item() if random_sample() < self.epsilon else self.env.action_space.sample()
         return action, dnn_logits
 
@@ -85,6 +105,7 @@ class RlTrainer:
         axes[0].plot(list(range(episode)), sliding_list_average(self.movements_count[:episode]), label="Average Movements")
         axes[0].set_title("Movements per episode")
         axes[1].plot(list(range(episode)), self.scores[:episode], label="Score")
+        axes[1].plot(list(range(episode)), sliding_list_average(self.scores[:episode]), label="Average Score")
         axes[1].set_title("Score per episode")
 
         for ax in axes:
@@ -100,7 +121,7 @@ class RlTrainer:
         '''
         self.movements_count[episode] = movements_count
         self.scores[episode] = score
-        if episode % 200 == 0:
+        if episode % self.plot_frequency == 0:
             self._create_metrics_plot(episode)
 
     def _train_episode(self):

@@ -42,25 +42,29 @@ class SnakeEnv(gym.Env):
             return -20
         elif score > self.score:
             self.score = score
-            return 20
+            return 50
         else:
-            return 0.1
+            return 1
 
     def reset(self):
-        '''Reset the environment.'''
+        '''Reset the environment.
+        Returns: tuple[np.array, list, list, list]: Observation, snake position, snake body, food position
+        '''
         self.game.reset()
         self.score = 0
         self._update_observation_space()
-        return self.observation_space
+        snake_position, snake_body, food_position = self.game.get_elements_space()
 
-    def step(self, action: int)-> tuple[np.array, float, bool, dict, bool]:
+        return self.observation_space, snake_position, snake_body, food_position
+
+    def step(self, action: int)-> tuple[tuple[np.array, list, list, list], float, bool, dict, bool]:
         '''Take a step in the environment.
         Args: action (int): Action
-        Returns: tuple[np.array, float, bool, dict, bool]: Observation, reward, done, info, done
+        Returns: tuple[tuple[np.array, list, list, list], float, bool, dict, bool]: Observation, reward, done, info, done
         '''
         states, score, _, _, done = self.game.step(self.ACTIONS_DICT[action])
-        snake_position, _, food_position = self.game.get_elements_space()
-        return self.observation_space, self._compute_reward(score, done), _, _, done
+        snake_position, snake_body, food_position = self.game.get_elements_space()
+        return [self.observation_space, snake_position, snake_body, food_position], self._compute_reward(score, done), _, _, done
 
     def render(self):
         '''Render the environment.'''
