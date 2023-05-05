@@ -13,7 +13,7 @@ class RlTrainer:
 
         self.episodes = 10_000
         self.batch_size = 256
-        self.epsilon = 0.3
+        self.epsilon = 0.5
         self._init_optimizer(learning_rate)
 
     def _init_optimizer(self, learning_rate):
