@@ -8,7 +8,7 @@ class RlTrainer:
         self.dnn = dnn
 
         self.episodes = 4000
-        self.batch_size = 64
+        self.batch_size = 128
         self.epsilon = 0.5
         self._init_optimizer(learning_rate)
 
@@ -25,12 +25,12 @@ class RlTrainer:
         self.scores = [0]*self.episodes
 
     def _update_epsilon(self):
-        self.epsilon = round(min(1, self.epsilon + 0.001), 3)
+        self.epsilon = min(round(min(1, self.epsilon + 0.001), 3), 0.95)
 
     def _sample_action(self, states):
         states_tensor = torch.tensor(states).float().flatten().unsqueeze(0)
         dnn_logits = self.dnn(states_tensor)
-        action = torch.argmax(dnn_logits).item() if random_sample() > self.epsilon else self.env.action_space.sample()
+        action = torch.argmax(dnn_logits).item() if random_sample() < self.epsilon else self.env.action_space.sample()
         return action, dnn_logits
 
     def _compute_loss(self, action, dnn_logits, reward):
