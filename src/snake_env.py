@@ -36,7 +36,7 @@ class SnakeEnv(gym.Env):
             self.score = score
             return 10
         else:
-            return 0
+            return 1
 
     def reset(self):
         self.game.reset()
