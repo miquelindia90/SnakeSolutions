@@ -6,26 +6,33 @@ import pygame
 
 
 class SnakeGame:
-    def __init__(self, board_size = 350, display=True):
-
+    '''Snake Game.'''
+    def __init__(self, board_size: int= 350, display: bool = True):
+        '''Initialize the Snake Game.
+        Args: board_size (int): Size of the board
+              display (bool): Display the game
+        '''
         self.board_size = board_size
         self.display = display
         self.pixel_size = 10
         self.reset()
 
     def reset(self):
+        '''Reset the game.'''
         if self.display:
             self._init_board()
         self._init_elements()
         self._init_score()
 
     def _init_board(self):
+        '''Initialize the board.'''
         pygame.init()
         self.game_surface = pygame.display.set_mode((self.board_size, self.board_size))
         self.fps = pygame.time.Clock()
         self.font = pygame.font.Font(None, 25)
     
     def _init_elements(self):
+        '''Initialize the elements.'''
         self.snake_position = [100, 50]
         self.snake_body = [[100,50], [90, 50], [80, 50]]
 
@@ -34,17 +41,21 @@ class SnakeGame:
         self._update_position_food()
 
     def get_elements_space(self):
+        '''Get the elements space.
+        Returns: tuple[list, list, list]: Snake position, snake body, food position'''
         return self.snake_position, self.snake_body, self.food_position       
         
     def _init_score(self):
+        '''Initialize the score.'''
         self.score = 0
 
     def _update_position_food(self):
+        '''Update the position of the food.'''
         random_position = random.randint(0, self.board_size//10 - 1)*10
         self.food_position = [random_position, random_position]
 
     def _register_actions(self):
-
+        '''Register the actions from the keyboard.'''
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.done = True
@@ -58,7 +69,10 @@ class SnakeGame:
                 if event.key == pygame.K_DOWN and self.action!="UP":
                     self.action = "DOWN"
 
-    def _update_board_elements(self, action):
+    def _update_board_elements(self, action: str):
+        '''Update the board elements.
+        Args: action (str): Action
+        '''
         
         if action == "RIGHT":
             self.snake_position[0] += self.pixel_size
@@ -77,15 +91,20 @@ class SnakeGame:
             self.snake_body.pop()
 
     def render(self):
+        '''Render the game.'''
         self._update_display()
 
-    def step(self, action):
+    def step(self, action: int) -> tuple[tuple[list, list, list], int, bool, bool, bool]:
+        '''Step the game.
+        Args: action (int): Action
+        Returns: tuple[tuple[list, list, list], int, bool, bool, bool]: Elements space, score, truncated, info, done
+        '''
         self._update_board_elements(action)
         self._update_game_status()
         return self.get_elements_space(), self.score, False, False, self.done
     
     def _update_display(self):
-
+        '''Update the display.'''
         self.game_surface.fill((0,0,0))
         for position in self.snake_body:
             pygame.draw.rect(self.game_surface, (200,200,200), pygame.Rect(position[0], position[1], self.pixel_size, self.pixel_size))
@@ -96,7 +115,7 @@ class SnakeGame:
         pygame.display.flip()
 
     def _update_game_status(self):
-
+        '''Update the game status.'''
         if self.snake_position[0] < 0 or self.snake_position[0] > self.board_size-self.pixel_size:
             self.done = True
         if self.snake_position[1] < 0 or self.snake_position[1] > self.board_size-self.pixel_size:
@@ -104,8 +123,10 @@ class SnakeGame:
         if self.snake_position in self.snake_body[1:]:
             self.done = True
 
-    def _update_board(self, action):
-
+    def _update_board(self, action: str):
+        '''Update the board.
+        Args: action (str): Action
+        '''
         self._update_board_elements(action)
         if self.display:
             self._update_display()
@@ -113,7 +134,8 @@ class SnakeGame:
             
 
     def start(self):
-        
+        '''Start the game.'''
+                
         while not self.done:
             
             self._register_actions()
