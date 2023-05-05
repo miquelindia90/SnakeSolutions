@@ -2,11 +2,12 @@ from src.snake_env import SnakeEnv
 from src.dnn import DNN
 from src.rl_trainer import RlTrainer
 
+BOARD_SIZE = 350
 
 def main():
 
-    env = SnakeEnv()
-    dnn =  DNN(24, 4, 24)
+    env = SnakeEnv(board_size=BOARD_SIZE)
+    dnn =  DNN(BOARD_SIZE**2, 4, BOARD_SIZE)
     trainer = RlTrainer(env, dnn)
     trainer.train()
 
