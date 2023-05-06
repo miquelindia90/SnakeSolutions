@@ -25,7 +25,7 @@ class RlTrainer:
 
         self.episodes = 100_000
         self.plot_frequency = self.episodes//100
-        self.batch_size = 512
+        self.batch_size = 8192
         self.epsilon = 0.5
         self._init_optimizer(learning_rate)
 
@@ -43,9 +43,10 @@ class RlTrainer:
         self.movements_count = [0]*self.episodes
         self.scores = [0]*self.episodes
 
-    def _update_epsilon(self):
-        '''Update the epsilon value.'''
-        self.epsilon = min(round(min(1, self.epsilon + 0.0001), 4), 0.9)
+    def _update_epsilon(self, episode: int):
+        '''Update the epsilon value.
+        Args: episode (int): Episode number'''
+        self.epsilon = round(self.epsilon + 0.5/self.episodes, 8)
 
     def _compute_food_distance_tensor(self, snake_position: list, food_position: list) -> torch.Tensor:
         '''Compute a tensor that contains the distance from the snake head to the food.
@@ -151,5 +152,5 @@ class RlTrainer:
         for episode in range(self.episodes):
             movements_count, score = self._train_episode()
             self._log_metrics(episode, movements_count, score)
-            self._update_epsilon()
+            self._update_epsilon(episode)
             print(f"Episode: {episode}, Epsilon: {self.epsilon}, Movements: {movements_count}, Score: {score}")
