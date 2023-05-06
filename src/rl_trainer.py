@@ -13,7 +13,7 @@ def sliding_list_average(list: list, sliding_window: int = 150) -> list:
 
 class RlTrainer:
     ''' Class that trains a DNN to play snake game using Reinforcement Learning '''
-    def __init__(self, env, dnn, learning_rate=0.0001):
+    def __init__(self, env, dnn, model_name, learning_rate=0.0001):
         '''Initialize the trainer.
         
         Args: env (SnakeEnv): Snake environment
@@ -23,7 +23,9 @@ class RlTrainer:
         self.env = env
         self.dnn = dnn
 
-        self.episodes = 100_000
+        self.model_name = model_name
+
+        self.episodes = 300_000
         self.plot_frequency = self.episodes//100
         self.batch_size = 20
         self.epsilon = 0.5
@@ -43,11 +45,12 @@ class RlTrainer:
         self.movements_count = [0]*self.episodes
         self.scores = [0]*self.episodes
         self.rewards = [0]*self.episodes
+        self.best_average_reward = -100
 
     def _update_epsilon(self, episode: int):
         '''Update the epsilon value.
         Args: episode (int): Episode number'''
-        self.epsilon = round(self.epsilon + 0.5/self.episodes, 8)
+        self.epsilon = min(round(self.epsilon + 1/self.episodes, 8), 0.99)
 
     def _compute_food_distance_tensor(self, snake_position: list, food_position: list) -> torch.Tensor:
         '''Compute a tensor that contains the distance from the snake head to the food.
@@ -116,7 +119,7 @@ class RlTrainer:
         axes[0][1].plot(list(range(episode)), sliding_list_average(self.movements_count[:episode]), label="Average Movements")
         axes[0][1].set_title("Movements")
         
-        plt.savefig("logs/Movements.png")
+        plt.savefig("logs/{}_metrics.png".format(self.model_name))
         plt.close()
 
     def _log_metrics(self, episode: int, movements_count: int, score: int, reward: int):
@@ -130,6 +133,15 @@ class RlTrainer:
         self.rewards[episode] = reward
         if episode % self.plot_frequency == 0:
             self._create_metrics_plot(episode)
+
+    def _save_model(self, episode: int):
+        '''Save the model.
+        Args: episode (int): Episode number
+        '''
+        current_average_reward = sliding_list_average(self.rewards[:episode+1])[-1]
+        if current_average_reward > self.best_average_reward:
+            torch.save(self.dnn.state_dict(), "models/model_{}.pth".format(self.model_name))
+            self.best_average_reward = current_average_reward
 
     def _train_episode(self):
         '''Train an episode.
@@ -161,5 +173,22 @@ class RlTrainer:
             if episode % self.batch_size == 0:
                 self._update_weights()
             self._log_metrics(episode, movements_count, score, rewards)
+            self._save_model(episode)
             self._update_epsilon(episode)
             print(f"Episode: {episode}, Epsilon: {self.epsilon}, Movements: {movements_count}, Score: {score}")
+
+    def test(self, games: int = 1):
+        '''Test the DNN.
+        Args: games (int): Number of games to play        '''
+
+        self.dnn.load_state_dict(torch.load("models/model_" +self.model_name + ".pth"))
+        self.dnn.eval()
+        self.epsilon = 1
+        for _ in range(games):
+            states = self.env.reset()
+            done = False
+            while not done:
+                action, _ = self._sample_action(states)
+                satates, _, _, _, done = self.env.step(action)
+                self.env.render()
+        self.env.close()
