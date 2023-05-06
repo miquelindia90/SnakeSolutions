@@ -24,7 +24,7 @@ class RlTrainer:
         self.dnn = dnn
 
         self.episodes = 100_000
-        self.plot_frequency = self.episodes//20
+        self.plot_frequency = self.episodes//100
         self.batch_size = 512
         self.epsilon = 0.5
         self._init_optimizer(learning_rate)
@@ -111,7 +111,7 @@ class RlTrainer:
         for ax in axes:
             ax.label_outer()
         plt.savefig("logs/Movements.png")
-        figure.clf()
+        plt.close()
 
     def _log_metrics(self, episode: int, movements_count: int, score: int):
         '''Log the metrics for the training.
