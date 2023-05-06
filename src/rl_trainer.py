@@ -74,10 +74,12 @@ class RlTrainer:
         '''
         observation_space, snake_position, snake_body, food_position = states
         observation_space_tensor = torch.tensor(observation_space).float().flatten().unsqueeze(0)
+        direction_tensor = torch.tensor([snake_position[0] - snake_body[1][0], snake_position[1] - snake_body[1][1]]).float().unsqueeze(0)
         food_distance_tensor = self._compute_food_distance_tensor(snake_position=snake_position, food_position=food_position)
         board_limits_distance_tensor = self._compute_board_limits_distance_tensor(snake_position=snake_position)
+
         snake_body_tensor = torch.tensor(snake_body).float().unsqueeze(0)
-        dnn_logits = self.dnn(observation_space_tensor, food_distance_tensor, board_limits_distance_tensor, snake_body_tensor)
+        dnn_logits = self.dnn(direction_tensor, food_distance_tensor, board_limits_distance_tensor, snake_body_tensor)
         action = torch.argmax(dnn_logits).item() if random_sample() < self.epsilon else self.env.action_space.sample()
         return action, dnn_logits
 
@@ -157,7 +159,6 @@ class RlTrainer:
         while not done:
             action, dnn_logits = self._sample_action(states)
             states, reward, _, _, done = self.env.step(action)
-            #self.env.render()
             rewards += reward
             self.loss += self._compute_loss(action, dnn_logits, reward)
             self.batch_count += 1
