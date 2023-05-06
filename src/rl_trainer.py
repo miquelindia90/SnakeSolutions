@@ -45,12 +45,12 @@ class RlTrainer:
         self.movements_count = [0]*self.episodes
         self.scores = [0]*self.episodes
         self.rewards = [0]*self.episodes
-        self.best_average_reward = -100
+        self.best_average_reward = -10000
 
     def _update_epsilon(self, episode: int):
         '''Update the epsilon value.
         Args: episode (int): Episode number'''
-        self.epsilon = min(round(self.epsilon + 1/self.episodes, 8), 0.99)
+        self.epsilon = min(round(self.epsilon + 1/self.episodes, 8), 0.9)
 
     def _compute_food_distance_tensor(self, snake_position: list, food_position: list) -> torch.Tensor:
         '''Compute a tensor that contains the distance from the snake head to the food.
@@ -130,7 +130,7 @@ class RlTrainer:
         '''
         self.movements_count[episode] = movements_count
         self.scores[episode] = score
-        self.rewards[episode] = reward
+        self.rewards[episode] = float(reward)
         if episode % self.plot_frequency == 0:
             self._create_metrics_plot(episode)
 
@@ -138,10 +138,12 @@ class RlTrainer:
         '''Save the model.
         Args: episode (int): Episode number
         '''
-        current_average_reward = sliding_list_average(self.rewards[:episode+1])[-1]
-        if current_average_reward > self.best_average_reward:
-            torch.save(self.dnn.state_dict(), "models/model_{}.pth".format(self.model_name))
-            self.best_average_reward = current_average_reward
+        if episode > 150:
+            current_average_reward = sliding_list_average(self.rewards[:episode])[-1]
+            if current_average_reward > self.best_average_reward:
+                torch.save(self.dnn.state_dict(), "models/model_{}.pth".format(self.model_name))
+                self.best_average_reward = current_average_reward
+                print("Model saved with average reward {}".format(current_average_reward))
 
     def _train_episode(self):
         '''Train an episode.
