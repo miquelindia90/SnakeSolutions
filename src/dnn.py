@@ -19,8 +19,7 @@ class DNN(nn.Module):
         '''Initialize the layers.'''
         self.fc1 = nn.Linear(6, self.hidden_size)
         self.lstm = nn.LSTM(2, self.hidden_size, batch_first=True)
-        self.fc2 = nn.Linear(self.hidden_size*2, self.hidden_size)
-        self.fc3 = nn.Linear(self.hidden_size, self.output_size)
+        self.fc2 = nn.Linear(self.hidden_size*2, self.output_size)
 
     def forward(self, observation_space: torch.tensor,
                 food_distance: torch.tensor,
@@ -35,7 +34,6 @@ class DNN(nn.Module):
         x = torch.cat([food_distance, board_limits_distance], dim=1)
         x = torch.relu(self.fc1(x))
         _, [y,_] = self.lstm(snake_body)
-        x = torch.relu(self.fc2(torch.cat([x, y.squeeze(1)], dim=1)))
-        x = self.fc3(x)
+        x = self.fc2(torch.cat([x, y.squeeze(1)], dim=1))
 
         return torch.softmax(x, dim=1)
