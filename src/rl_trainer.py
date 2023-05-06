@@ -42,6 +42,7 @@ class RlTrainer:
         '''Initialize the training metrics.'''
         self.movements_count = [0]*self.episodes
         self.scores = [0]*self.episodes
+        self.rewards = [0]*self.episodes
 
     def _update_epsilon(self, episode: int):
         '''Update the epsilon value.
@@ -102,20 +103,23 @@ class RlTrainer:
         Args: episode (int): Episode number
         '''
 
-        figure, axes = plt.subplots(2)
-        axes[0].plot(list(range(episode)), self.movements_count[:episode], label="Movements")
-        axes[0].plot(list(range(episode)), sliding_list_average(self.movements_count[:episode]), label="Average Movements")
-        axes[0].set_title("Movements per episode")
-        axes[1].plot(list(range(episode)), self.scores[:episode], label="Score")
-        axes[1].plot(list(range(episode)), sliding_list_average(self.scores[:episode]), label="Average Score")
-        axes[1].set_title("Score per episode")
-
-        for ax in axes:
-            ax.label_outer()
+        figure, axes = plt.subplots(2, 2, figsize=(30, 10))
+        
+        axes[0][0].plot(list(range(episode)), self.scores[:episode], label="Score")
+        axes[0][0].plot(list(range(episode)), sliding_list_average(self.scores[:episode]), label="Average Score")
+        axes[0][0].set_title("Score")
+        axes[1][0].plot(list(range(episode)), self.rewards[:episode], label="Reward")
+        axes[1][0].plot(list(range(episode)), sliding_list_average(self.rewards[:episode]), label="Average Reward")
+        axes[1][0].set_title("Reward")
+        axes[1][0].set_xlabel("Episode")
+        axes[0][1].plot(list(range(episode)), self.movements_count[:episode], label="Movements")
+        axes[0][1].plot(list(range(episode)), sliding_list_average(self.movements_count[:episode]), label="Average Movements")
+        axes[0][1].set_title("Movements")
+        
         plt.savefig("logs/Movements.png")
         plt.close()
 
-    def _log_metrics(self, episode: int, movements_count: int, score: int):
+    def _log_metrics(self, episode: int, movements_count: int, score: int, reward: int):
         '''Log the metrics for the training.
         Args: episode (int): Episode number
               movements_count (int): Movements count
@@ -123,6 +127,7 @@ class RlTrainer:
         '''
         self.movements_count[episode] = movements_count
         self.scores[episode] = score
+        self.rewards[episode] = reward
         if episode % self.plot_frequency == 0:
             self._create_metrics_plot(episode)
 
@@ -134,15 +139,17 @@ class RlTrainer:
         states = self.env.reset()
         done = False
         movements_count = 0
+        rewards = 0
         while not done:
             action, dnn_logits = self._sample_action(states)
             states, reward, _, _, done = self.env.step(action)
             #self.env.render()
+            rewards += reward
             self.loss += self._compute_loss(action, dnn_logits, reward)
             self.batch_count += 1
             movements_count += 1
             
-        return movements_count, self.env.score
+        return movements_count, self.env.score, rewards
              
     def train(self):
         '''Train the DNN.'''
@@ -150,9 +157,9 @@ class RlTrainer:
         self._init_training_variables()
         self._init_train_metrics()
         for episode in range(self.episodes):
-            movements_count, score = self._train_episode()
+            movements_count, score, rewards = self._train_episode()
             if episode % self.batch_size == 0:
                 self._update_weights()
-            self._log_metrics(episode, movements_count, score)
+            self._log_metrics(episode, movements_count, score, rewards)
             self._update_epsilon(episode)
             print(f"Episode: {episode}, Epsilon: {self.epsilon}, Movements: {movements_count}, Score: {score}")
