@@ -1,3 +1,5 @@
+from progress.bar import Bar
+
 import torch
 from numpy.random import random_sample
 import matplotlib.pyplot as plt
@@ -25,8 +27,8 @@ class RlTrainer:
 
         self.model_name = model_name
 
-        self.episodes = 300_000
-        self.plot_frequency = self.episodes//100
+        self.episodes = 500_000
+        self.plot_frequency = self.episodes//1000
         self.batch_size = 20
         self.epsilon = 0.5
         self._init_optimizer(learning_rate)
@@ -45,12 +47,14 @@ class RlTrainer:
         self.movements_count = [0]*self.episodes
         self.scores = [0]*self.episodes
         self.rewards = [0]*self.episodes
+        self.epsilons = [0]*self.episodes
         self.best_average_reward = -10000
 
     def _update_epsilon(self, episode: int):
         '''Update the epsilon value.
         Args: episode (int): Episode number'''
         self.epsilon = min(round(self.epsilon + 1/self.episodes, 8), 0.9)
+        self.epsilons[episode] = float(self.epsilon)
 
     def _compute_food_distance_tensor(self, snake_position: list, food_position: list) -> torch.Tensor:
         '''Compute a tensor that contains the distance from the snake head to the food.
@@ -120,6 +124,9 @@ class RlTrainer:
         axes[0][1].plot(list(range(episode)), self.movements_count[:episode], label="Movements")
         axes[0][1].plot(list(range(episode)), sliding_list_average(self.movements_count[:episode]), label="Average Movements")
         axes[0][1].set_title("Movements")
+        axes[1][1].plot(list(range(episode)), self.epsilons[:episode], label="Epsilon")
+        axes[1][1].set_title("Epsilon")
+        axes[1][1].set_xlabel("Episode")
         
         plt.savefig("logs/{}_metrics.png".format(self.model_name))
         plt.close()
@@ -145,7 +152,6 @@ class RlTrainer:
             if current_average_reward > self.best_average_reward:
                 torch.save(self.dnn.state_dict(), "models/model_{}.pth".format(self.model_name))
                 self.best_average_reward = current_average_reward
-                print("Model saved with average reward {}".format(current_average_reward))
 
     def _train_episode(self):
         '''Train an episode.
@@ -171,14 +177,15 @@ class RlTrainer:
 
         self._init_training_variables()
         self._init_train_metrics()
-        for episode in range(self.episodes):
-            movements_count, score, rewards = self._train_episode()
-            if episode % self.batch_size == 0:
-                self._update_weights()
-            self._log_metrics(episode, movements_count, score, rewards)
-            self._save_model(episode)
-            self._update_epsilon(episode)
-            print(f"Episode: {episode}, Epsilon: {self.epsilon}, Movements: {movements_count}, Score: {score}")
+        with Bar("Training...", max=self.episodes) as bar: 
+            for episode in range(self.episodes):
+                movements_count, score, rewards = self._train_episode()
+                if episode % self.batch_size == 0:
+                    self._update_weights()
+                self._log_metrics(episode, movements_count, score, rewards)
+                self._save_model(episode)
+                self._update_epsilon(episode)
+                bar.next()
 
     def test(self, games: int = 1):
         '''Test the DNN.
