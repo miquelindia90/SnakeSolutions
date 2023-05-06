@@ -9,7 +9,7 @@ HIDDEN_SIZE = 100
 
 def main(model_name: str):
     '''Main function.'''
-    env = SnakeEnv(board_size=BOARD_SIZE)
+    env = SnakeEnv(board_size=BOARD_SIZE, display=True)
     dnn =  DNN(4, HIDDEN_SIZE)
     trainer = RlTrainer(env=env, dnn=dnn, model_name=model_name)
     trainer.test(games=25)

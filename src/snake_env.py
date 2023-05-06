@@ -11,14 +11,14 @@ class SnakeEnv(gym.Env):
         2: "UP",
         3: "DOWN"
     }
-    def __init__(self, board_size = 350):
+    def __init__(self, board_size = 350, display = False):
         '''Initialize the Snake Environment.
         Args: board_size (int): Size of the board
         '''
         super(SnakeEnv, self).__init__()
         self.board_size = board_size
         self.score = 0
-        self.game = SnakeGame(board_size=board_size)
+        self.game = SnakeGame(board_size=board_size, display=display)
         self.action_space = gym.spaces.Discrete(4)        
         self._update_observation_space()
         
