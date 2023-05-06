@@ -45,12 +45,12 @@ class SnakeEnv(gym.Env):
         Returns: float: Reward
         '''
         if done:
-            return -20
+            return -10
         elif score > self.score:
             self.score = score
-            return 50
+            return 10
         else:
-            return 1# - self._compute_l2_distance(snake_position, food_position)/self.board_size
+            return 0 # - self._compute_l2_distance(snake_position, food_position)/self.board_size
 
     def reset(self):
         '''Reset the environment.
