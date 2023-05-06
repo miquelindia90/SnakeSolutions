@@ -25,7 +25,7 @@ class RlTrainer:
 
         self.episodes = 100_000
         self.plot_frequency = self.episodes//100
-        self.batch_size = 8192
+        self.batch_size = 20
         self.epsilon = 0.5
         self._init_optimizer(learning_rate)
 
@@ -90,11 +90,12 @@ class RlTrainer:
     def _update_weights(self):
         '''Update the weights of the DNN.'''
 
-        self.loss /= self.batch_size
+        self.loss /= self.batch_count
         self.loss.backward()
         self.optimizer.step()
         self.optimizer.zero_grad()
         self.loss = 0
+        self.batch_count = 0
 
     def _create_metrics_plot(self, episode: int):
         '''Create the metrics plot for the training.
@@ -140,8 +141,7 @@ class RlTrainer:
             self.loss += self._compute_loss(action, dnn_logits, reward)
             self.batch_count += 1
             movements_count += 1
-            if self.batch_count % self.batch_size == 0:
-                self._update_weights()
+            
         return movements_count, self.env.score
              
     def train(self):
@@ -151,6 +151,8 @@ class RlTrainer:
         self._init_train_metrics()
         for episode in range(self.episodes):
             movements_count, score = self._train_episode()
+            if episode % self.batch_size == 0:
+                self._update_weights()
             self._log_metrics(episode, movements_count, score)
             self._update_epsilon(episode)
             print(f"Episode: {episode}, Epsilon: {self.epsilon}, Movements: {movements_count}, Score: {score}")
