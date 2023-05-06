@@ -2,7 +2,7 @@ from src.snake_env import SnakeEnv
 from src.dnn import DNN
 from src.rl_trainer import RlTrainer
 
-BOARD_SIZE = 400
+BOARD_SIZE = 200
 
 def main():
     '''Main function.'''
