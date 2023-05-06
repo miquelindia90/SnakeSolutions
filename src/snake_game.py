@@ -15,12 +15,17 @@ class SnakeGame:
         self.board_size = board_size
         self.display = display
         self.pixel_size = 10
-        self.reset()
+        self._init_game()
+
+    def _init_game(self):
+        '''Initialize the game.'''
+        if self.display:
+            self._init_board()
+        self._init_elements()
+        self._init_score()
 
     def reset(self):
         '''Reset the game.'''
-        if self.display:
-            self._init_board()
         self._init_elements()
         self._init_score()
 
