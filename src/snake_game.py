@@ -7,7 +7,7 @@ import pygame
 
 class SnakeGame:
     '''Snake Game.'''
-    def __init__(self, board_size: int= 350, display: bool = True):
+    def __init__(self, board_size: int= 400, display: bool = False):
         '''Initialize the Snake Game.
         Args: board_size (int): Size of the board
               display (bool): Display the game
@@ -16,6 +16,7 @@ class SnakeGame:
         self.display = display
         self.pixel_size = 10
         self._init_game()
+        
 
     def _init_game(self):
         '''Initialize the game.'''
@@ -38,8 +39,10 @@ class SnakeGame:
     
     def _init_elements(self):
         '''Initialize the elements.'''
-        self.snake_position = [100, 50]
-        self.snake_body = [[100,50], [90, 50], [80, 50]]
+        x_postion = int(random.randint(3, self.board_size/10 - 3)*10)
+        y_postion = int(random.randint(3, self.board_size/10 - 3)*10)
+        self.snake_position = [x_postion, y_postion]
+        self.snake_body = [[x_postion, y_postion], [x_postion - self.pixel_size, y_postion - self.pixel_size], [x_postion -2*self.pixel_size,  y_postion - 2*self.pixel_size]]
 
         self.action = "RIGHT"
         self.done = False
@@ -139,11 +142,9 @@ class SnakeGame:
             
 
     def start(self):
-        '''Start the game.'''
-                
+        '''Start the game.'''                
         while not self.done:
-            
             self._register_actions()
             self._update_board(self.action)    
-
-        pygame.quit()
+        if self.display:
+            pygame.quit()
