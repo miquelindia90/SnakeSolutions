@@ -32,12 +32,6 @@ class SnakeEnv(gym.Env):
         self.observation_space[snake_position[0], snake_position[1]] = 1
         self.observation_space[food_position[0], food_position[1]] = 2
 
-    def _compute_l2_distance(self, snake_position: list, food_position: list) -> float:
-        distance = 0.
-        for snake_component, food_component in zip(snake_position, food_position):
-            distance += (snake_component - food_component)**2
-        return distance**0.5
-    
     def _compute_reward(self, score: int, done: bool, snake_position: list, food_position: list) -> float():
         '''Compute the reward.
         Args: score (int): Score
@@ -50,7 +44,7 @@ class SnakeEnv(gym.Env):
             self.score = score
             return 10
         else:
-            return 0 # - self._compute_l2_distance(snake_position, food_position)/self.board_size
+            return 0
 
     def reset(self):
         '''Reset the environment.
