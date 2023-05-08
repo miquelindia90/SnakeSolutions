@@ -20,24 +20,7 @@ class SnakeEnv(gym.Env):
         self.score = 0
         self.game = SnakeGame(board_size=board_size, display=display)
         self.action_space = gym.spaces.Discrete(4)        
-        self._update_observation_space()
         
-
-    def _update_observation_space(self):
-        '''Update the observation space.'''
-        snake_position, snake_body, food_position = self.game.get_elements_space()
-        self.observation_space = -np.ones((self.board_size, self.board_size), dtype=np.int8)
-        for snake_point in snake_body[1:]:
-            self.observation_space[snake_point[0], snake_point[1]] = 0
-        self.observation_space[snake_position[0], snake_position[1]] = 1
-        self.observation_space[food_position[0], food_position[1]] = 2
-
-    def _compute_l2_distance(self, snake_position: list, food_position: list) -> float:
-        distance = 0.
-        for snake_component, food_component in zip(snake_position, food_position):
-            distance += (snake_component - food_component)**2
-        return distance**0.5
-    
     def _compute_reward(self, score: int, done: bool, snake_position: list, food_position: list) -> float():
         '''Compute the reward.
         Args: score (int): Score
@@ -50,18 +33,62 @@ class SnakeEnv(gym.Env):
             self.score = score
             return 10
         else:
-            return 0 # - self._compute_l2_distance(snake_position, food_position)/self.board_size
+            return 0
+        
 
+    def _get_snake_body_danger(self, snake_position: list, snake_body: list) -> list:
+        '''Get the danger of the snake in each direction in relation to its body.
+        Args: snake_position (list): Snake position
+              snake_body (list): Snake body
+        Returns: list: Danger of the snake in each direction
+        '''
+        danger = [0, 0, 0, 0]
+        for body_part in snake_body:
+            if snake_position[0] == body_part[0]:
+                if snake_position[1] < body_part[1]:
+                    danger[0] += 1
+                else:
+                    danger[1] += 1
+            elif snake_position[1] == body_part[1]:
+                if snake_position[0] < body_part[0]:
+                    danger[2] += 1
+                else:
+                    danger[3] += 1
+        danger = np.array(danger) - max(danger)
+        danger = np.sign(danger) + 1
+        return danger
+    
+    def _get_snake_wall_danger(self, snake_position: list) -> list:
+        '''Get the danger of the snake in each direction in relation to the walls.
+        Args: snake_position (list): Snake position
+        Returns: list: Danger of the snake in each direction
+        '''
+        danger = [0, 0, 0, 0]
+        if snake_position[0] == 0:
+            danger[2] = 1
+        elif snake_position[0] == self.board_size:
+            danger[3] = 1
+        if snake_position[1] == 0:
+            danger[0] = 1
+        elif snake_position[1] == self.board_size:
+            danger[1] = 1
+        return np.array(danger)
+        
+    def _calculate_states(self):
+        snake_position, snake_body, food_position = self.game.get_elements_space()
+        snake_direction = np.sign(np.array([snake_position[0] - snake_body[1][0], snake_position[1] - snake_body[1][1]]))
+        food_distance = np.sign(np.array([food_position[0] - snake_position[0], food_position[1] - snake_position[1]]))
+        snake_direction_danger = self._get_snake_body_danger(snake_position, snake_body)
+        snake_wall_danger = self._get_snake_wall_danger(snake_position)
+        return snake_direction, food_distance, snake_direction_danger, snake_wall_danger
+    
     def reset(self):
         '''Reset the environment.
         Returns: tuple[np.array, list, list, list]: Observation, snake position, snake body, food position
         '''
         self.game.reset()
         self.score = 0
-        self._update_observation_space()
-        snake_position, snake_body, food_position = self.game.get_elements_space()
-
-        return self.observation_space, snake_position, snake_body, food_position
+        return self._calculate_states()
 
     def step(self, action: int)-> tuple[tuple[np.array, list, list, list], float, bool, dict, bool]:
         '''Take a step in the environment.
@@ -69,8 +96,8 @@ class SnakeEnv(gym.Env):
         Returns: tuple[tuple[np.array, list, list, list], float, bool, dict, bool]: Observation, reward, done, info, done
         '''
         states, score, _, _, done = self.game.step(self.ACTIONS_DICT[action])
-        snake_position, snake_body, food_position = self.game.get_elements_space()
-        return [self.observation_space, snake_position, snake_body, food_position], self._compute_reward(score, done, snake_position, food_position), _, _, done
+        snake_position, _, food_position = self.game.get_elements_space()
+        return self._calculate_states(), self._compute_reward(score, done, snake_position, food_position), _, _, done
 
     def render(self):
         '''Render the environment.'''

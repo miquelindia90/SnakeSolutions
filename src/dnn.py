@@ -10,7 +10,7 @@ class DNN(nn.Module):
               hidden_size (int): Hidden size
         '''
         super(DNN, self).__init__()
-        self.input_size = 8
+        self.input_size = 12
         self.output_size = output_size
         self.hidden_size = hidden_size
         self._init_layers()
@@ -18,24 +18,22 @@ class DNN(nn.Module):
     def _init_layers(self):
         '''Initialize the layers.'''
         self.fc1 = nn.Linear(self.input_size, self.hidden_size)
-        self.lstm = nn.LSTM(2, self.hidden_size, batch_first=True)
-        self.fc2 = nn.Linear(self.hidden_size*2, self.output_size)
+        self.fc2 = nn.Linear(self.hidden_size, self.output_size)
 
     def forward(self, direction: torch.tensor,
                 food_distance: torch.tensor,
-                board_limits_distance: torch.tensor,
-                snake_body: torch.tensor,
+                snake_body_danger: torch.tensor,
+                snake_wall_danger: torch.tensor
                 ) -> torch.tensor:
         '''Compute the forward pass.
         Args: direction (torch.tensor): Direction
               food_distance (torch.tensor): Food distance
-              board_limits_distance (torch.tensor): Board limits distance
-              snake_body (torch.tensor): Snake body
+              snake_body_danger (torch.tensor): Snake body danger
+              snake_wall_danger (torch.tensor): Snake wall danger
         Returns: torch.tensor: Output
         '''
-        x = torch.cat([direction, food_distance, board_limits_distance], dim=1)
+        x = torch.cat([direction, food_distance, snake_body_danger, snake_wall_danger], dim=1)
         x = torch.relu(self.fc1(x))
-        _, [y,_] = self.lstm(snake_body)
-        x = self.fc2(torch.cat([x, y.squeeze(1)], dim=1))
+        x = self.fc2(x)
 
         return torch.softmax(x, dim=1)
