@@ -56,34 +56,17 @@ class RlTrainer:
         self.epsilon = min(round(self.epsilon + 1/self.episodes, 8), 0.9)
         self.epsilons[episode] = float(self.epsilon)
 
-    def _compute_food_distance_tensor(self, snake_position: list, food_position: list) -> torch.Tensor:
-        '''Compute a tensor that contains the distance from the snake head to the food.
-        Args: snake_position (list): Snake position
-              food_position (list): Food position
-        Returns: torch.Tensor: Distance from the snake head to the food
-        '''
-        return torch.tensor([abs(snake_position[0] - food_position[0]), abs(snake_position[1] - food_position[1])]).float().unsqueeze(0)
-    
-    def _compute_board_limits_distance_tensor(self, snake_position: list) -> torch.Tensor:
-        '''Compute a tensor that contains the distance from the snake head to the board limits.
-        Args: snake_position (list): Snake position
-        Returns: torch.Tensor: Distance from the snake head to the board limits
-        '''
-        return torch.tensor([snake_position[0], self.env.board_size-snake_position[0], snake_position[1], self.env.board_size-snake_position[1]]).float().unsqueeze(0)
-         
     def _sample_action(self, states: list) -> tuple[int, torch.Tensor]:
         '''Sample an action from the DNN or randomly.
         Args: states (list): List of states
         Returns: tuple[int, torch.Tensor]: Action and the DNN logits
         '''
-        observation_space, snake_position, snake_body, food_position = states
-        observation_space_tensor = torch.tensor(observation_space).float().flatten().unsqueeze(0)
-        direction_tensor = torch.tensor([snake_position[0] - snake_body[1][0], snake_position[1] - snake_body[1][1]]).float().unsqueeze(0)
-        food_distance_tensor = self._compute_food_distance_tensor(snake_position=snake_position, food_position=food_position)
-        board_limits_distance_tensor = self._compute_board_limits_distance_tensor(snake_position=snake_position)
-
-        snake_body_tensor = torch.tensor(snake_body).float().unsqueeze(0)
-        dnn_logits = self.dnn(direction_tensor, food_distance_tensor, board_limits_distance_tensor, snake_body_tensor)
+        snake_direction, food_distance, snake_body_danger, snake_wall_danger = states        
+        snake_direction_tensor = torch.tensor(snake_direction).float().unsqueeze(0)
+        food_distance_tensor = torch.tensor(food_distance).float().unsqueeze(0)
+        snake_body_danger_tensor = torch.tensor(snake_body_danger).float().unsqueeze(0)
+        snake_wall_danger_tensor = torch.tensor(snake_wall_danger).float().unsqueeze(0)
+        dnn_logits = self.dnn(snake_direction_tensor, food_distance_tensor, snake_body_danger_tensor, snake_wall_danger_tensor)
         action = torch.argmax(dnn_logits).item() if random_sample() < self.epsilon else self.env.action_space.sample()
         return action, dnn_logits
 
