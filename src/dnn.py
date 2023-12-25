@@ -36,4 +36,4 @@ class DNN(nn.Module):
         x = torch.relu(self.fc1(x))
         x = self.fc2(x)
 
-        return torch.softmax(x, dim=1)
+        return x
