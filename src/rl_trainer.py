@@ -1,6 +1,7 @@
 from progress.bar import Bar
 
 import torch
+from torch import nn
 from numpy.random import random_sample
 import matplotlib.pyplot as plt
 
@@ -27,10 +28,11 @@ class RlTrainer:
 
         self.model_name = model_name
 
-        self.episodes = 500_000
+        self.episodes = 100_000
         self.plot_frequency = self.episodes//1000
-        self.batch_size = 20
-        self.epsilon = 0.5
+        self.batch_size = 10
+        self.gamma = 0.95
+        self.epsilon = 0.1
         self._init_optimizer(learning_rate)
 
     def _init_optimizer(self, learning_rate: float):
@@ -70,15 +72,13 @@ class RlTrainer:
         action = torch.argmax(dnn_logits).item() if random_sample() < self.epsilon else self.env.action_space.sample()
         return action, dnn_logits
 
-    def _compute_loss(self, action: int, dnn_logits: torch.tensor, reward: int) -> torch.tensor:
+    def _compute_loss(self, q_value: torch.tensor, target_q_value: torch.tensor) -> torch.tensor:
         '''Compute the loss for the DNN.
-        Args: action (int): Action taken
-              dnn_logits (torch.tensor): DNN logits
-              reward (int): Reward obtained
+        Args: q_value (torch.tensor): Q-value predicted by the network
+          target_q_value (torch.tensor): Target Q-value based on the Bellman equation
         Returns: torch.tensor: Loss
         '''
-        logit = dnn_logits[0][action]
-        return -logit * torch.tensor(reward).float()
+        return nn.MSELoss()(q_value, target_q_value)
     
     def _update_weights(self):
         '''Update the weights of the DNN.'''
@@ -145,13 +145,22 @@ class RlTrainer:
         done = False
         movements_count = 0
         rewards = 0
+
         while not done:
-            action, dnn_logits = self._sample_action(states)
+            action, _ = self._sample_action(states)
+            prev_states = [torch.tensor(state).float().unsqueeze(0) for state in states]
             states, reward, _, _, done = self.env.step(action)
-            rewards += reward
-            self.loss += self._compute_loss(action, dnn_logits, reward)
+
+            # Calculate target Q-value using the Bellman equation
+            next_states = [torch.tensor(state).float().unsqueeze(0) for state in states]
+            target_q_value = reward + self.gamma * torch.max(self.dnn(*next_states))
+
+            # Calculate the loss and update the Q-network
+            q_value = self.dnn(*prev_states)[0][action]
+            self.loss += self._compute_loss(q_value, target_q_value)
             self.batch_count += 1
             movements_count += 1
+            rewards += reward
             
         return movements_count, self.env.score, rewards
              
