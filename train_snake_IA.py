@@ -4,7 +4,7 @@ from src.snake_env import SnakeEnv
 from src.dnn import DNN
 from src.rl_trainer import RlTrainer
 
-BOARD_SIZE = 400
+BOARD_SIZE = 200
 HIDDEN_SIZE = 100
 
 def main(model_name: str):

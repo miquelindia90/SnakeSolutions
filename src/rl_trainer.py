@@ -16,7 +16,7 @@ def sliding_list_average(list: list, sliding_window: int = 150) -> list:
 
 class RlTrainer:
     ''' Class that trains a DNN to play snake game using Reinforcement Learning '''
-    def __init__(self, env, dnn, model_name, learning_rate=0.0001):
+    def __init__(self, env, dnn, model_name, learning_rate=0.001):
         '''Initialize the trainer.
         
         Args: env (SnakeEnv): Snake environment
@@ -31,8 +31,8 @@ class RlTrainer:
         self.episodes = 100_000
         self.plot_frequency = self.episodes//1000
         self.batch_size = 10
-        self.gamma = 0.95
-        self.epsilon = 0.1
+        self.gamma = 0.99
+        self.epsilon = 0.5
         self._init_optimizer(learning_rate)
 
     def _init_optimizer(self, learning_rate: float):
@@ -55,7 +55,7 @@ class RlTrainer:
     def _update_epsilon(self, episode: int):
         '''Update the epsilon value.
         Args: episode (int): Episode number'''
-        self.epsilon = min(round(self.epsilon + 1/self.episodes, 8), 0.9)
+        self.epsilon = min(round(self.epsilon + 1/self.episodes, 8), 0.999)
         self.epsilons[episode] = float(self.epsilon)
 
     def _sample_action(self, states: list) -> tuple[int, torch.Tensor]:
