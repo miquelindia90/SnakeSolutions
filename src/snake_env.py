@@ -33,7 +33,7 @@ class SnakeEnv(gym.Env):
             self.score = score
             return 10
         else:
-            return 0
+            return -1
         
 
     def _get_snake_body_danger(self, snake_position: list, snake_body: list) -> list:
