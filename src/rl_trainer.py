@@ -1,7 +1,7 @@
 from progress.bar import Bar
 
 import random
-import copy
+import math
 import torch
 from torch import nn
 from numpy.random import random_sample
@@ -43,11 +43,14 @@ class RlTrainer:
 
         self.model_name = model_name
 
-        self.episodes = 10_000
-        self.plot_frequency = self.episodes//100
+        self.max_episodes = 10_000
+        self.plot_frequency = self.max_episodes//100
         self.batch_size = 10
         self.gamma = 0.95
-        self.epsilon = 0.5
+        self.initial_epsilon = 0.5  # Initial epsilon value
+        self.target_epsilon = 0.1  # Maximum epsilon value
+        self.epsilon_converge_ratio = 2/3  # Ratio for epsilon convergence
+        self._init_epsilon()        
         self.buffer_size = 1000
         self.replay_buffer = ReplayBuffer(buffer_size=self.buffer_size)
         self._init_optimizer(learning_rate)
@@ -56,6 +59,10 @@ class RlTrainer:
         '''Initialize the optimizer.'''
         self.optimizer = torch.optim.Adam(self.dnn.parameters(), lr=learning_rate)
 
+    def _init_epsilon(self):
+        '''Initialize the epsilon value.'''
+        self.epsilon = self.initial_epsilon
+
     def _init_training_variables(self):
         '''Initialize the training variables.'''
         self.loss = 0
@@ -63,16 +70,18 @@ class RlTrainer:
 
     def _init_train_metrics(self):
         '''Initialize the training metrics.'''
-        self.movements_count = [0]*self.episodes
-        self.scores = [0]*self.episodes
-        self.rewards = [0]*self.episodes
-        self.epsilons = [0]*self.episodes
+        self.movements_count = [0]*self.max_episodes
+        self.scores = [0]*self.max_episodes
+        self.rewards = [0]*self.max_episodes
+        self.epsilons = [0]*self.max_episodes
         self.best_average_reward = -10000
 
     def _update_epsilon(self, episode: int):
         '''Update the epsilon value.
         Args: episode (int): Episode number'''
-        self.epsilon = min(round(self.epsilon + 1/self.episodes, 8), 0.9)
+        decay_episodes = self.max_episodes * self.epsilon_converge_ratio
+        decay_rate = -math.log(self.target_epsilon / self.initial_epsilon) / decay_episodes
+        self.epsilon = max(self.target_epsilon, self.initial_epsilon * math.exp(-decay_rate * episode))
         self.epsilons[episode] = float(self.epsilon)
 
     def _sample_action(self, states: list) -> tuple[int, torch.Tensor]:
@@ -86,7 +95,7 @@ class RlTrainer:
         snake_body_danger_tensor = torch.tensor(snake_body_danger).float().unsqueeze(0)
         snake_wall_danger_tensor = torch.tensor(snake_wall_danger).float().unsqueeze(0)
         dnn_logits = self.dnn(snake_direction_tensor, food_distance_tensor, snake_body_danger_tensor, snake_wall_danger_tensor)
-        action = torch.argmax(dnn_logits).item() if random_sample() < self.epsilon else self.env.action_space.sample()
+        action = torch.argmax(dnn_logits).item() if random_sample() > self.epsilon else self.env.action_space.sample()
         return action, dnn_logits
 
     def _compute_loss(self, q_value: torch.tensor, target_q_value: torch.tensor) -> torch.tensor:
@@ -201,8 +210,8 @@ class RlTrainer:
 
         self._init_training_variables()
         self._init_train_metrics()
-        with Bar("Training...", max=self.episodes) as bar: 
-            for episode in range(self.episodes):
+        with Bar("Training...", max=self.max_episodes) as bar: 
+            for episode in range(self.max_episodes):
                 movements_count, score, rewards = self._train_episode()
                 if episode % self.batch_size == 0:
                     self._update_weights()
