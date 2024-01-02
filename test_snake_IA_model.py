@@ -4,8 +4,8 @@ from src.snake_env import SnakeEnv
 from src.dnn import DNN
 from src.rl_trainer import RlTrainer
 
-BOARD_SIZE = 200
-HIDDEN_SIZE = 100
+BOARD_SIZE = 150
+HIDDEN_SIZE = 50
 
 def main(model_name: str):
     '''Main function.'''
