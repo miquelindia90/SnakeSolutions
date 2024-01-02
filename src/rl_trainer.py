@@ -28,10 +28,10 @@ class RlTrainer:
 
         self.model_name = model_name
 
-        self.episodes = 100_000
-        self.plot_frequency = self.episodes//1000
+        self.episodes = 10_000
+        self.plot_frequency = self.episodes//100
         self.batch_size = 10
-        self.gamma = 0.99
+        self.gamma = 0.95
         self.epsilon = 0.5
         self._init_optimizer(learning_rate)
 
