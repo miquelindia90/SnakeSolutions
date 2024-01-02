@@ -5,7 +5,7 @@ from src.dnn import DNN
 from src.rl_trainer import RlTrainer
 
 BOARD_SIZE = 150
-HIDDEN_SIZE = 50
+HIDDEN_SIZE = 100
 
 def main(model_name: str):
     '''Main function.'''
