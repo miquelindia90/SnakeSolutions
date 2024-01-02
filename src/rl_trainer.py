@@ -43,15 +43,15 @@ class RlTrainer:
 
         self.model_name = model_name
 
-        self.max_episodes = 100_000
+        self.max_episodes = 1_000_000
         self.plot_frequency = self.max_episodes//100
-        self.batch_size = 10
+        self.batch_size = 20
         self.gamma = 0.95
         self.initial_epsilon = 0.5  # Initial epsilon value
         self.target_epsilon = 0.01  # Maximum epsilon value
-        self.epsilon_converge_ratio = 2/3  # Ratio for epsilon convergence
+        self.epsilon_converge_ratio = 1/3  # Ratio for epsilon convergence
         self._init_epsilon()        
-        self.buffer_size = 3000
+        self.buffer_size = 5000
         self.replay_buffer = ReplayBuffer(buffer_size=self.buffer_size)
         self._init_optimizer(learning_rate)
 
