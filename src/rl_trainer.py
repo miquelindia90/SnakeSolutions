@@ -1,5 +1,7 @@
 from progress.bar import Bar
 
+import random
+import copy
 import torch
 from torch import nn
 from numpy.random import random_sample
@@ -13,6 +15,19 @@ def sliding_list_average(list: list, sliding_window: int = 150) -> list:
     Returns: list: Sliding average of the list
     '''
     return [sum(list[max(0,i-sliding_window):i])/sliding_window for i in range(len(list))]
+
+class ReplayBuffer:
+    def __init__(self, buffer_size):
+        self.buffer_size = buffer_size
+        self.buffer = []
+    
+    def add_experience(self, experience):
+        if len(self.buffer) >= self.buffer_size:
+            self.buffer.pop(0)
+        self.buffer.append(experience)
+    
+    def sample_batch(self, batch_size):
+        return random.sample(self.buffer, batch_size)
 
 class RlTrainer:
     ''' Class that trains a DNN to play snake game using Reinforcement Learning '''
@@ -33,6 +48,8 @@ class RlTrainer:
         self.batch_size = 10
         self.gamma = 0.95
         self.epsilon = 0.5
+        self.buffer_size = 1000
+        self.replay_buffer = ReplayBuffer(buffer_size=self.buffer_size)
         self._init_optimizer(learning_rate)
 
     def _init_optimizer(self, learning_rate: float):
@@ -55,7 +72,7 @@ class RlTrainer:
     def _update_epsilon(self, episode: int):
         '''Update the epsilon value.
         Args: episode (int): Episode number'''
-        self.epsilon = min(round(self.epsilon + 1/self.episodes, 8), 0.999)
+        self.epsilon = min(round(self.epsilon + 1/self.episodes, 8), 0.9)
         self.epsilons[episode] = float(self.epsilon)
 
     def _sample_action(self, states: list) -> tuple[int, torch.Tensor]:
@@ -152,7 +169,8 @@ class RlTrainer:
             states, reward, _, _, done = self.env.step(action)
 
             # Calculate target Q-value using the Bellman equation
-            next_states = [torch.tensor(state).float().unsqueeze(0) for state in states]
+            next_states =[torch.tensor(state).float().unsqueeze(0) for state in states]
+            self.replay_buffer.add_experience((prev_states, action, reward, next_states, done))
             target_q_value = reward + self.gamma * torch.max(self.dnn(*next_states))
 
             # Calculate the loss and update the Q-network
@@ -162,7 +180,21 @@ class RlTrainer:
             movements_count += 1
             rewards += reward
             
+
         return movements_count, self.env.score, rewards
+    
+    def _apply_buffer_replay(self):
+        batch = self.replay_buffer.sample_batch(self.batch_size)
+        for experience_idx, experience in enumerate(batch):
+            prev_states, action, reward, next_states, done = experience
+
+            #Calculate target Q-value using the Bellman equation           
+            target_q_value = reward + self.gamma * torch.max(self.dnn(*next_states))
+            q_value = self.dnn(*prev_states)[0][action]
+            loss = self._compute_loss(q_value, target_q_value)
+            loss.backward()
+            self.optimizer.step()
+            self.optimizer.zero_grad()                
              
     def train(self):
         '''Train the DNN.'''
@@ -174,10 +206,13 @@ class RlTrainer:
                 movements_count, score, rewards = self._train_episode()
                 if episode % self.batch_size == 0:
                     self._update_weights()
+                    if len(self.replay_buffer.buffer) >= self.batch_size:
+                        self._apply_buffer_replay()
                 self._log_metrics(episode, movements_count, score, rewards)
                 self._save_model(episode)
                 self._update_epsilon(episode)
                 bar.next()
+                
 
     def test(self, games: int = 1):
         '''Test the DNN.
