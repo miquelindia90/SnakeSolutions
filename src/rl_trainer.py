@@ -226,6 +226,6 @@ class RlTrainer:
             done = False
             while not done:
                 action, _ = self._sample_action(states)
-                satates, _, _, _, done = self.env.step(action)
+                states, _, _, _, done = self.env.step(action)
                 self.env.render()
         self.env.close()
