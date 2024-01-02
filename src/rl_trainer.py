@@ -31,7 +31,7 @@ class ReplayBuffer:
 
 class RlTrainer:
     ''' Class that trains a DNN to play snake game using Reinforcement Learning '''
-    def __init__(self, env, dnn, model_name, learning_rate=0.001):
+    def __init__(self, env, dnn, model_name, learning_rate=0.0001):
         '''Initialize the trainer.
         
         Args: env (SnakeEnv): Snake environment
