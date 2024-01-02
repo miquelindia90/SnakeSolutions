@@ -116,7 +116,7 @@ class SnakeGame:
             pygame.draw.rect(self.game_surface, (200,200,200), pygame.Rect(position[0], position[1], self.pixel_size, self.pixel_size))
         pygame.draw.rect(self.game_surface, (255,0,0), pygame.Rect(self.food_position[0], self.food_position[1], self.pixel_size, self.pixel_size))
         text = self.font.render(str(self.score), 0, (250,60,80))
-        self.game_surface.blit(text, (self.board_size-2*self.pixel_size,20))
+        #self.game_surface.blit(text, (self.board_size-2*self.pixel_size,20))
         self.fps.tick(self.pixel_size)
         pygame.display.flip()
 
