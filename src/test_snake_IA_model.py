@@ -1,8 +1,8 @@
 import sys
 
-from src.snake_env import SnakeEnv
-from src.dnn import DNN
-from src.rl_trainer import RlTrainer
+from snake_env import SnakeEnv
+from dnn import DNN
+from rl_trainer import RlTrainer
 
 BOARD_SIZE = 150
 HIDDEN_SIZE = 100
