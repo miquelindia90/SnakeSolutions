@@ -97,7 +97,7 @@ class SnakeEnv(gym.Env):
         '''
         states, score, _, _, done = self.game.step(self.ACTIONS_DICT[action])
         snake_position, _, food_position = self.game.get_elements_space()
-        return self._calculate_states(), self._compute_reward(score, done, snake_position, food_position), _, _, done
+        return self._calculate_states(), self._compute_reward(score, done, snake_position, food_position), score, _, done
 
     def render(self):
         '''Render the environment.'''
