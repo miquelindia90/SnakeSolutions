@@ -1,7 +1,7 @@
 import gym
 import numpy as np
 
-from src.snake_game import SnakeGame
+from snake_game import SnakeGame
 
 class SnakeEnv(gym.Env):
     '''Snake Environment.'''

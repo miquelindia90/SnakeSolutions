@@ -1,4 +1,4 @@
-from src.snake_game import SnakeGame
+from snake_game import SnakeGame
 
 def main():
     '''Main function.'''
