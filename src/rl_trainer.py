@@ -1,11 +1,12 @@
-from progress.bar import Bar
-
+import os
 import random
 import math
+
+import matplotlib.pyplot as plt
 import torch
 from torch import nn
 from numpy.random import random_sample
-import matplotlib.pyplot as plt
+from progress.bar import Bar
 
 
 def sliding_list_average(list: list, sliding_window: int = 150) -> list:
@@ -62,6 +63,12 @@ class RlTrainer:
     def _init_epsilon(self):
         '''Initialize the epsilon value.'''
         self.epsilon = self.initial_epsilon
+
+    def _init_model_folders(self):
+        '''Initialize the model folder.'''
+        if not os.path.exists("models/{}".format(self.model_name)):
+            os.mkdir("models/{}".format(self.model_name))
+       
 
     def _init_training_variables(self):
         '''Initialize the training variables.'''
@@ -137,7 +144,7 @@ class RlTrainer:
         axes[1][1].set_title("Epsilon")
         axes[1][1].set_xlabel("Episode")
         
-        plt.savefig("logs/{}_metrics.png".format(self.model_name))
+        plt.savefig("models/{}/metrics.png".format(self.model_name))
         plt.close()
 
     def _log_metrics(self, episode: int, movements_count: int, score: int, reward: int):
@@ -159,7 +166,7 @@ class RlTrainer:
         if episode > 150:
             current_average_score = sliding_list_average(self.scores[:episode])[-1]
             if current_average_score > self.best_average_score:
-                torch.save(self.dnn.state_dict(), "models/model_{}.pth".format(self.model_name))
+                torch.save(self.dnn.state_dict(), "models/{}/model.pth".format(self.model_name))
                 self.best_average_score = current_average_score
 
     def _train_episode(self):
@@ -208,6 +215,7 @@ class RlTrainer:
     def train(self):
         '''Train the DNN.'''
 
+        self._init_model_folders()
         self._init_training_variables()
         self._init_train_metrics()
         with Bar("Training...", max=self.max_episodes) as bar: 
