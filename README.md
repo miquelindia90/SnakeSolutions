@@ -32,7 +32,7 @@ To play the Snake Game manually, you can use the `play_snake.py` script provided
 4. Run the following command to start playing the Snake Game:
 
     ```bash
-    python play_snake.py
+    python src/play_snake.py
     ```
 
     This command will launch the Snake Game interface, allowing you to control the snake using the arrow keys.
@@ -55,7 +55,7 @@ To train the Snake AI models, you can use the `train_snake_IA.py` script provide
 4. Run the following command to start training the Snake AI models:
 
     ```bash
-    python train_snake_IA.py
+    python src/train_snake_IA.py
     ```
 
     This command will initiate the training process and start training the AI models using reinforcement learning algorithms.
@@ -77,7 +77,7 @@ To test the trained Snake AI models, you can use the `test_snake_IA_model.py` sc
 4. Run the following command to start testing the Snake AI model:
 
     ```bash
-    python test_snake_IA_model.py <model_name>
+    python src/test_snake_IA_model.py <model_name>
     ```
 
     Replace `<model_name>` with the name of the model you want to test. This should be the name of the saved model file without the file extension.
@@ -85,7 +85,7 @@ To test the trained Snake AI models, you can use the `test_snake_IA_model.py` sc
     For example, if you have a model named `snake_model.pth`, the command would be:
 
     ```bash
-    python test_snake_IA_model.py snake_model
+    python src/test_snake_IA_model.py snake_model
     ```
 
     This command will load the specified model and run the Snake Game using the trained AI model.
