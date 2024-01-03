@@ -57,9 +57,13 @@ class SnakeGame:
 
     def _update_position_food(self):
         '''Update the position of the food.'''
-        random_position = random.randint(0, self.board_size//10 - 1)*10
-        self.food_position = [random_position, random_position]
-
+        valid_position = False
+        while not valid_position:
+            random_position = random.randint(0, self.board_size//10 - 1)*10
+            self.food_position = [random_position, random_position]
+            if self.food_position not in self.snake_body:
+                valid_position = True
+                
     def _register_actions(self):
         '''Register the actions from the keyboard.'''
         for event in pygame.event.get():
