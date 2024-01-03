@@ -223,18 +223,22 @@ class RlTrainer:
                 bar.next()
                 
 
-    def test(self, games: int = 1):
+    def test(self, games: int = 1, display: bool = False):
         '''Test the DNN.
         Args: games (int): Number of games to play        '''
 
         self.dnn.load_state_dict(torch.load("models/model_" +self.model_name + ".pth"))
         self.dnn.eval()
-        self.epsilon = 1
+        self.epsilon = 0
+        scores = list()
         for _ in range(games):
             states = self.env.reset()
             done = False
             while not done:
                 action, _ = self._sample_action(states)
-                states, _, _, _, done = self.env.step(action)
-                self.env.render()
+                states, _, score, _, done = self.env.step(action)
+                if display:
+                    self.env.render()
+            scores.append(score)
+        print("Mean Score: {}, Max Score: {}".format(sum(scores)/len(scores), max(scores)))
         self.env.close()
