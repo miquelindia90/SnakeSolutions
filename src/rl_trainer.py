@@ -44,7 +44,7 @@ class RlTrainer:
         self.model_name = model_name
 
         self.max_episodes = 1_000_000
-        self.plot_frequency = self.max_episodes//100
+        self.plot_frequency = self.max_episodes//1000
         self.batch_size = 20
         self.gamma = 0.95
         self.initial_epsilon = 0.5  # Initial epsilon value
@@ -74,7 +74,7 @@ class RlTrainer:
         self.scores = [0]*self.max_episodes
         self.rewards = [0]*self.max_episodes
         self.epsilons = [0]*self.max_episodes
-        self.best_average_reward = -10000
+        self.best_average_score = 0
 
     def _update_epsilon(self, episode: int):
         '''Update the epsilon value.
@@ -157,10 +157,10 @@ class RlTrainer:
         Args: episode (int): Episode number
         '''
         if episode > 150:
-            current_average_reward = sliding_list_average(self.rewards[:episode])[-1]
-            if current_average_reward > self.best_average_reward:
+            current_average_score = sliding_list_average(self.scores[:episode])[-1]
+            if current_average_score > self.best_average_score:
                 torch.save(self.dnn.state_dict(), "models/model_{}.pth".format(self.model_name))
-                self.best_average_reward = current_average_reward
+                self.best_average_score = current_average_score
 
     def _train_episode(self):
         '''Train an episode.
