@@ -235,7 +235,7 @@ class RlTrainer:
         '''Test the DNN.
         Args: games (int): Number of games to play        '''
 
-        self.dnn.load_state_dict(torch.load("models/model_" +self.model_name + ".pth"))
+        self.dnn.load_state_dict(torch.load("models/" + self.model_name + "/model.pth"))
         self.dnn.eval()
         self.epsilon = 0
         scores = list()
