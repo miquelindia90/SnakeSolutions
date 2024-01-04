@@ -38,29 +38,28 @@ class ReplayBuffer:
 class RlTrainer:
     """ Class that trains a DNN to play snake game using Reinforcement Learning """
 
-    def __init__(self, env, dnn, model_name, learning_rate=0.0001):
+    def __init__(self, env, dnn, parameters):
         """Initialize the trainer.
         
         Args: env (SnakeEnv): Snake environment
               dnn (DNN): DNN to train
-              learning_rate (float): Learning rate for the optimizer
+              parameters (argparse.Namespace): training configuration variables
         """
         self.env = env
         self.dnn = dnn
 
-        self.model_name = model_name
-
-        self.max_episodes = 1_000_000
+        self.model_name = parameters.model_name
+        self.max_episodes = parameters.max_episodes
         self.plot_frequency = self.max_episodes // 1000
-        self.batch_size = 20
-        self.gamma = 0.95
-        self.initial_epsilon = 0.5  # Initial epsilon value
-        self.target_epsilon = 0.01  # Maximum epsilon value
-        self.epsilon_converge_ratio = 1 / 3  # Ratio for epsilon convergence
+        self.batch_size = parameters.batch_size
+        self.gamma = parameters.gamma  # Discount factor
+        self.initial_epsilon = parameters.initial_epsilon  # Initial epsilon value
+        self.target_epsilon = parameters.target_epsilon  # Maximum epsilon value
+        self.epsilon_converge_ratio = parameters.epsilon_converge_ratio  # Ratio for epsilon convergence
         self._init_epsilon()
-        self.buffer_size = 5000
+        self.buffer_size = parameters.buffer_size
         self.replay_buffer = ReplayBuffer(buffer_size=self.buffer_size)
-        self._init_optimizer(learning_rate)
+        self._init_optimizer(parameters.learning_rate)
 
     def _init_optimizer(self, learning_rate: float):
         """Initialize the optimizer."""
