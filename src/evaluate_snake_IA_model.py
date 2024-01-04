@@ -1,18 +1,23 @@
 import sys
+import json
 
 from snake_env import SnakeEnv
 from dnn import DNN
 from rl_trainer import RlTrainer
 
-BOARD_SIZE = 150
-HIDDEN_SIZE = 100
+
+def load_json_config(file_name: str) -> dict:
+    """Load json file."""
+    with open(file_name, "r") as json_file:
+        return json.load(json_file)
 
 
 def main(model_name: str) -> None:
     """Main function."""
-    env = SnakeEnv(board_size=BOARD_SIZE, display=False)
-    dnn = DNN(4, HIDDEN_SIZE)
-    trainer = RlTrainer(env=env, dnn=dnn, model_name=model_name)
+    parameters = load_json_config("models/" + model_name + "/config.json")
+    env = SnakeEnv(board_size=parameters["board_size"], display=True)
+    dnn = DNN(4, parameters["hidden_size"])
+    trainer = RlTrainer(env=env, dnn=dnn, parameters=parameters)
     trainer.test(games=1000, display=False)
 
 
