@@ -64,6 +64,37 @@ To train the Snake AI models, you can use the `train_snake_IA.py` script provide
 
 Once the training is finished, you can use the trained AI models to play the Snake Game or evaluate their performance.
 
+## Evaluate the Snake AI Model
+
+To evaluate the performance of the trained Snake AI models, you can use the `evaluate_snake_IA_model.py` script provided in the SnakeSolutions project.
+
+1. Make sure you have completed the installation steps mentioned above.
+
+2. Open a terminal or command prompt.
+
+3. Navigate to the root directory of the SnakeSolutions project.
+
+4. Run the following command to start evaluating the Snake AI model:
+
+    ```bash
+    python src/evaluate_snake_IA_model.py <model_name>
+    ```
+
+    Replace `<model_name>` with the name of the model you want to evaluate. This should be the name of the saved model file without the file extension.
+
+    For example, if you have a model named `snake_model.pth`, the command would be:
+
+    ```bash
+    python src/evaluate_snake_IA_model.py snake_model
+    ```
+
+    This command will load the specified model and evaluate its performance by running multiple games of Snake using the trained AI model.
+
+5. Observe the evaluation results, which may include metrics such as average score, highest score, and game duration.
+
+Note: Make sure you have the necessary dependencies installed and the model file is located in the correct directory before running the evaluation script.
+
+
 ## Testing the Snake AI Model
 
 To test the trained Snake AI models, you can use the `test_snake_IA_model.py` script provided in the SnakeSolutions project.
@@ -93,3 +124,14 @@ To test the trained Snake AI models, you can use the `test_snake_IA_model.py` sc
 5. Observe the Snake Game being played by the AI model and evaluate its performance.
 
 Note: Make sure you have the necessary dependencies installed and the model file is located in the correct directory before running the test script.
+
+## Models and Results
+
+The following table shows the performance metrics of the different Snake AI models:
+
+| Model | Average Score | Max Score |
+|-------|---------------|-----------|
+| DQN   | 13.384        | 35        |
+| DDQN  | 0             | 0         |
+
+The results were obtained after playing 1000 games in a 150 border game.
