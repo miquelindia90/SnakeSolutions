@@ -68,7 +68,7 @@ class RlTrainer:
     def _init_epsilon(self):
         """Initialize the epsilon value."""
         self.epsilon = self.initial_epsilon
-    
+
     def _init_training_variables(self):
         """Initialize the training variables."""
         self.loss = 0
