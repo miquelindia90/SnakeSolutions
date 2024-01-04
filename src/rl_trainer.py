@@ -54,6 +54,7 @@ class RlTrainer:
         self.batch_size = parameters["batch_size"]
         self.gamma = parameters["gamma"]  # Discount factor
         self.initial_epsilon = parameters["initial_epsilon"]  # Initial epsilon value
+        self.target_epsilon = parameters["target_epsilon"]  # Maximum epsilon value
         self.epsilon_converge_ratio = parameters["epsilon_converge_ratio"]
         self._init_epsilon()
         self.buffer_size = parameters["buffer_size"]
@@ -67,12 +68,7 @@ class RlTrainer:
     def _init_epsilon(self):
         """Initialize the epsilon value."""
         self.epsilon = self.initial_epsilon
-
-    def _init_model_folders(self):
-        """Initialize the model folder."""
-        if not os.path.exists("models/{}".format(self.model_name)):
-            os.mkdir("models/{}".format(self.model_name))
-
+    
     def _init_training_variables(self):
         """Initialize the training variables."""
         self.loss = 0
@@ -250,7 +246,6 @@ class RlTrainer:
     def train(self):
         """Train the DNN."""
 
-        self._init_model_folders()
         self._init_training_variables()
         self._init_train_metrics()
         with Bar("Training...", max=self.max_episodes) as bar:
