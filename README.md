@@ -124,3 +124,14 @@ To test the trained Snake AI models, you can use the `test_snake_IA_model.py` sc
 5. Observe the Snake Game being played by the AI model and evaluate its performance.
 
 Note: Make sure you have the necessary dependencies installed and the model file is located in the correct directory before running the test script.
+
+## Models and Results
+
+The following table shows the performance metrics of the different Snake AI models:
+
+| Model | Average Score | Max Score |
+|-------|---------------|-----------|
+| DQN   | 13.384        | 35        |
+| DDQN  | 0             | 0         |
+
+The results were obtained after playing 1000 games in a 150 border game.
