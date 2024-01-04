@@ -1,9 +1,11 @@
 from snake_game import SnakeGame
 
+
 def main():
-    '''Main function.'''
+    """Main function."""
     game = SnakeGame(display=True)
     game.start()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
