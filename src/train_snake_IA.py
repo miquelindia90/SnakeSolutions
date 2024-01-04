@@ -9,8 +9,8 @@ from rl_trainer import RlTrainer
 
 def main(parameters: argparse.Namespace) -> None:
     """Main function."""
-    env = SnakeEnv(board_size=parameters.board_size)
-    dnn = DNN(4, parameters.hidden_size)
+    env = SnakeEnv(board_size=parameters["board_size"])
+    dnn = DNN(4, parameters["hidden_size"])
     trainer = RlTrainer(env=env, dnn=dnn, parameters=parameters)
     trainer.train()
 
@@ -34,5 +34,5 @@ if __name__ == "__main__":
     parser.add_argument("--epsilon_converge_ratio", type=float, default=1 / 3, help="Ratio for epsilon convergence")
     parser.add_argument("--buffer_size", type=int, default=5000, help="Size of the replay buffer")
 
-    parameters = parser.parse_args()
+    parameters = vars(parser.parse_args())
     main(parameters)

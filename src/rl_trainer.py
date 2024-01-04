@@ -48,18 +48,17 @@ class RlTrainer:
         self.env = env
         self.dnn = dnn
 
-        self.model_name = parameters.model_name
-        self.max_episodes = parameters.max_episodes
+        self.model_name = parameters["model_name"]
+        self.max_episodes = parameters["max_episodes"]
         self.plot_frequency = self.max_episodes // 1000
-        self.batch_size = parameters.batch_size
-        self.gamma = parameters.gamma  # Discount factor
-        self.initial_epsilon = parameters.initial_epsilon  # Initial epsilon value
-        self.target_epsilon = parameters.target_epsilon  # Maximum epsilon value
-        self.epsilon_converge_ratio = parameters.epsilon_converge_ratio  # Ratio for epsilon convergence
+        self.batch_size = parameters["batch_size"]
+        self.gamma = parameters["gamma"]  # Discount factor
+        self.initial_epsilon = parameters["initial_epsilon"]  # Initial epsilon value
+        self.epsilon_converge_ratio = parameters["epsilon_converge_ratio"]
         self._init_epsilon()
-        self.buffer_size = parameters.buffer_size
+        self.buffer_size = parameters["buffer_size"]
         self.replay_buffer = ReplayBuffer(buffer_size=self.buffer_size)
-        self._init_optimizer(parameters.learning_rate)
+        self._init_optimizer(parameters["learning_rate"])
 
     def _init_optimizer(self, learning_rate: float):
         """Initialize the optimizer."""
