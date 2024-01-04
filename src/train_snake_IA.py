@@ -1,14 +1,24 @@
-import sys
+import os
+import json
 import argparse
 
 from snake_env import SnakeEnv
 from dnn import DNN
 from rl_trainer import RlTrainer
 
+def _init_model_folders(model_name: str) -> None:
+    """Initialize the model folder."""
+    if not os.path.exists("models/{}".format(model_name)):
+        os.mkdir("models/{}".format(model_name))
 
+def _save_config_data(model_name: str, parameters: dict) -> None:
+    with open("models/" + model_name + "/config.json", 'w') as json_handler:
+        json.dump(parameters, json_handler, indent=4)
 
-def main(parameters: argparse.Namespace) -> None:
+def main(parameters: dict) -> None:
     """Main function."""
+    _init_model_folders(parameters["model_name"])
+    _save_config_data(parameters["model_name"], parameters)
     env = SnakeEnv(board_size=parameters["board_size"])
     dnn = DNN(4, parameters["hidden_size"])
     trainer = RlTrainer(env=env, dnn=dnn, parameters=parameters)
@@ -18,7 +28,7 @@ def main(parameters: argparse.Namespace) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--model_name", type=str, help="Name of the model to be trained")
+    parser.add_argument("--model_name", "-n",  type=str, required=True, help="Name of the model to be trained")
     parser.add_argument("--board_size", type=int, default=150, help="Size of the board")
 
     # DNN Configuration
