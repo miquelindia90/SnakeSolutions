@@ -43,7 +43,7 @@ class RlTrainer:
         
         Args: env (SnakeEnv): Snake environment
               dnn (DNN): DNN to train
-              parameters (argparse.Namespace): training configuration variables
+              parameters (dict): training configuration variables
         """
         self.env = env
         self.dnn = dnn
