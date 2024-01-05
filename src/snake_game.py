@@ -6,7 +6,7 @@ import pygame
 class SnakeGame:
     """Snake Game."""
 
-    def __init__(self, board_size: int = 400, display: bool = False):
+    def __init__(self, board_size: int = 200, display: bool = False):
         """Initialize the Snake Game.
         Args: board_size (int): Size of the board
               display (bool): Display the game
@@ -15,7 +15,7 @@ class SnakeGame:
         self.board_padding = 10
         self.display = display
         self.pixel_size = 10
-        self.title_box_size = [self.board_size, 40]
+        self.title_box_size = [self.board_size, self.board_size//10]
         self._init_game()
 
     def _init_game(self):
@@ -35,7 +35,7 @@ class SnakeGame:
         pygame.init()
         self.game_surface = pygame.display.set_mode((self.title_box_size[0] + self.board_padding, self.board_size + self.title_box_size[1] + self.board_padding))
         self.fps = pygame.time.Clock()
-        self.font = pygame.font.Font(None, 25)
+        
 
     def _init_elements(self):
         """Initialize the elements."""
@@ -128,14 +128,15 @@ class SnakeGame:
         self.game_surface.fill((0, 0, 0))
 
         # Draw title outside the box
-        title_font = pygame.font.Font(None, 36)
+        title_font = pygame.font.Font(None, self.board_size//10)
         title_text = title_font.render("Snake Game", True, (255, 255, 255))
         title_rect = title_text.get_rect(center=(self.title_box_size[0] // 3, self.title_box_size[1] // 2))
         self.game_surface.blit(title_text, title_rect)
 
         # Draw score outside the box
+        title_font = pygame.font.Font(None, self.board_size//10)
         score_text = title_font.render("Score: " + str(self.score), True, (255, 255, 255))
-        score_rect = score_text.get_rect(center=(self.title_box_size[0] - 100, self.title_box_size[1] // 2))
+        score_rect = score_text.get_rect(center=(self.title_box_size[0] - self.board_size//5, self.title_box_size[1] // 2))
         self.game_surface.blit(score_text, score_rect)
 
         # Draw snake and food inside the box
