@@ -38,8 +38,8 @@ class SnakeGame:
 
     def _init_elements(self):
         """Initialize the elements."""
-        x_postion = int(random.randint(3, self.board_size / 10 - 3) * 10)
-        y_postion = int(random.randint(3, self.board_size / 10 - 3 + self.title_box_size[1]) * 10)
+        x_postion = int(random.randint(3, self.board_size // 10 - 3) * 10)
+        y_postion = int(random.randint(3, (self.board_size + self.title_box_size[1]) // 10 - 3 ) * 10)
         self.snake_position = [x_postion, y_postion]
         self.snake_body = [
             [x_postion, y_postion],
@@ -170,7 +170,7 @@ class SnakeGame:
         ):
             self.done = True
         if (
-            self.snake_position[1] < 0
+            self.snake_position[1] < self.title_box_size[1]
             or self.snake_position[1] > self.board_size + self.title_box_size[1]- self.pixel_size
         ):
             self.done = True
