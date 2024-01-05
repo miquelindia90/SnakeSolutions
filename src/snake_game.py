@@ -12,6 +12,7 @@ class SnakeGame:
               display (bool): Display the game
         """
         self.board_size = board_size
+        self.board_padding = 10
         self.display = display
         self.pixel_size = 10
         self.title_box_size = [max(self.board_size, 100), 40]
@@ -32,14 +33,14 @@ class SnakeGame:
     def _init_board(self):
         """Initialize the board."""
         pygame.init()
-        self.game_surface = pygame.display.set_mode((self.title_box_size[0], self.board_size+self.title_box_size[1]))
+        self.game_surface = pygame.display.set_mode((self.title_box_size[0] + self.board_padding, self.board_size + self.title_box_size[1] + self.board_padding))
         self.fps = pygame.time.Clock()
         self.font = pygame.font.Font(None, 25)
 
     def _init_elements(self):
         """Initialize the elements."""
-        x_postion = int(random.randint(3, self.board_size // 10 - 3) * 10)
-        y_postion = int(random.randint(3, (self.board_size + self.title_box_size[1]) // 10 - 3 ) * 10)
+        x_postion = int(random.randint(3+self.board_padding//10, (self.board_size + self.board_padding)// 10 - 3) * 10)
+        y_postion = int(random.randint(3+self.board_padding//10, (self.board_size + self.title_box_size[1] + self.board_padding) // 10 - 3 ) * 10)
         self.snake_position = [x_postion, y_postion]
         self.snake_body = [
             [x_postion, y_postion],
@@ -64,8 +65,8 @@ class SnakeGame:
         """Update the position of the food."""
         valid_position = False
         while not valid_position:
-            x_random_position = random.randint(0, self.board_size // 10 - 1) * 10
-            y_random_position = random.randint(self.title_box_size[1]//10, self.board_size // 10 + self.title_box_size[1]//10 - 1) * 10
+            x_random_position = random.randint(self.board_padding//10, (self.board_size + self.board_padding) // 10 - 1) * 10
+            y_random_position = random.randint((self.title_box_size[1] + self.board_padding)//10, (self.board_size + self.title_box_size[1]) // 10 - 1) * 10
             self.food_position = [x_random_position, y_random_position]
             if self.food_position not in self.snake_body:
                 valid_position = True
@@ -156,7 +157,7 @@ class SnakeGame:
          )
 
         # Add borders to the snake box
-        pygame.draw.rect(self.game_surface, (255, 255, 255), (5, 5 + self.title_box_size[1], 390, 390), 3)
+        pygame.draw.rect(self.game_surface, (255, 255, 255), (0, 0 + self.title_box_size[1], self.board_size + self.board_padding, self.board_size+ self.board_padding), self.board_padding)
 
         # Update display
         self.fps.tick(self.pixel_size)
@@ -165,13 +166,13 @@ class SnakeGame:
     def _update_game_status(self):
         """Update the game status."""
         if (
-            self.snake_position[0] < 0
-            or self.snake_position[0] > self.board_size - self.pixel_size
+            self.snake_position[0] < self.board_padding
+            or self.snake_position[0] > self.board_size + self.board_padding - self.pixel_size
         ):
             self.done = True
         if (
-            self.snake_position[1] < self.title_box_size[1]
-            or self.snake_position[1] > self.board_size + self.title_box_size[1]- self.pixel_size
+            self.snake_position[1] < self.title_box_size[1] + self.board_padding
+            or self.snake_position[1] > self.board_size + self.title_box_size[1] - self.pixel_size
         ):
             self.done = True
         if self.snake_position in self.snake_body[1:]:
