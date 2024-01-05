@@ -15,7 +15,7 @@ class SnakeGame:
         self.board_padding = 10
         self.display = display
         self.pixel_size = 10
-        self.title_box_size = [self.board_size, self.board_size//10]
+        self.title_box_size = [self.board_size, self.board_size // 10]
         self._init_game()
 
     def _init_game(self):
@@ -33,14 +33,30 @@ class SnakeGame:
     def _init_board(self):
         """Initialize the board."""
         pygame.init()
-        self.game_surface = pygame.display.set_mode((self.title_box_size[0] + self.board_padding, self.board_size + self.title_box_size[1] + self.board_padding))
+        self.game_surface = pygame.display.set_mode(
+            (
+                self.title_box_size[0] + self.board_padding,
+                self.board_size + self.title_box_size[1] + self.board_padding,
+            )
+        )
         self.fps = pygame.time.Clock()
-        
 
     def _init_elements(self):
         """Initialize the elements."""
-        x_postion = int(random.randint(3+self.board_padding//10, (self.board_size + self.board_padding)// 10 - 3) * 10)
-        y_postion = int(random.randint(3+self.board_padding//10, (self.board_size + self.title_box_size[1] + self.board_padding) // 10 - 3 ) * 10)
+        x_postion = int(
+            random.randint(
+                3 + self.board_padding // self.pixel_size,
+                (self.board_size) // self.pixel_size - 3,
+            )
+            * self.pixel_size
+        )
+        y_postion = int(
+            random.randint(
+                3 + self.board_padding // self.pixel_size,
+                (self.board_size + self.title_box_size[1]) // self.pixel_size - 3,
+            )
+            * self.pixel_size
+        )
         self.snake_position = [x_postion, y_postion]
         self.snake_body = [
             [x_postion, y_postion],
@@ -65,8 +81,20 @@ class SnakeGame:
         """Update the position of the food."""
         valid_position = False
         while not valid_position:
-            x_random_position = random.randint(self.board_padding//10, (self.board_size) // 10 - 1) * 10
-            y_random_position = random.randint((self.title_box_size[1] + self.board_padding)//10, (self.board_size + self.title_box_size[1]) // 10 - 1) * 10
+            x_random_position = (
+                random.randint(
+                    self.board_padding // self.pixel_size,
+                    (self.board_size) // self.pixel_size - 1,
+                )
+                * self.pixel_size
+            )
+            y_random_position = (
+                random.randint(
+                    (self.title_box_size[1] + self.board_padding) // self.pixel_size,
+                    (self.board_size + self.title_box_size[1]) // self.pixel_size - 1,
+                )
+                * self.pixel_size
+            )
             self.food_position = [x_random_position, y_random_position]
             if self.food_position not in self.snake_body:
                 valid_position = True
@@ -128,37 +156,56 @@ class SnakeGame:
         self.game_surface.fill((0, 0, 0))
 
         # Draw title outside the box
-        title_font = pygame.font.Font(None, self.board_size//10)
+        title_font = pygame.font.Font(None, self.board_size // 10)
         title_text = title_font.render("Snake Game", True, (255, 255, 255))
-        title_rect = title_text.get_rect(center=(self.title_box_size[0] // 3, self.title_box_size[1] // 2))
+        title_rect = title_text.get_rect(
+            center=(self.title_box_size[0] // 3, self.title_box_size[1] // 2)
+        )
         self.game_surface.blit(title_text, title_rect)
 
         # Draw score outside the box
-        title_font = pygame.font.Font(None, self.board_size//10)
-        score_text = title_font.render("Score: " + str(self.score), True, (255, 255, 255))
-        score_rect = score_text.get_rect(center=(self.title_box_size[0] - self.board_size//5, self.title_box_size[1] // 2))
+        title_font = pygame.font.Font(None, self.board_size // 10)
+        score_text = title_font.render(
+            "Score: " + str(self.score), True, (255, 255, 255)
+        )
+        score_rect = score_text.get_rect(
+            center=(
+                self.title_box_size[0] - self.board_size // 5,
+                self.title_box_size[1] // 2,
+            )
+        )
         self.game_surface.blit(score_text, score_rect)
 
         # Draw snake and food inside the box
         for position in self.snake_body:
             pygame.draw.rect(
-                 self.game_surface,
-                 (200, 200, 200),
-                 pygame.Rect(position[0], position[1], self.pixel_size, self.pixel_size),
+                self.game_surface,
+                (200, 200, 200),
+                pygame.Rect(position[0], position[1], self.pixel_size, self.pixel_size),
             )
         pygame.draw.rect(
-             self.game_surface,
-             (255, 0, 0),
-             pygame.Rect(
-                 self.food_position[0],
-                 self.food_position[1],
-                 self.pixel_size,
+            self.game_surface,
+            (255, 0, 0),
+            pygame.Rect(
+                self.food_position[0],
+                self.food_position[1],
+                self.pixel_size,
                 self.pixel_size,
             ),
-         )
+        )
 
         # Add borders to the snake box
-        pygame.draw.rect(self.game_surface, (255, 255, 255), (0, 0 + self.title_box_size[1], self.board_size + self.board_padding, self.board_size+ self.board_padding), self.board_padding)
+        pygame.draw.rect(
+            self.game_surface,
+            (255, 255, 255),
+            (
+                0,
+                0 + self.title_box_size[1],
+                self.board_size + self.board_padding,
+                self.board_size + self.board_padding,
+            ),
+            self.board_padding,
+        )
 
         # Update display
         self.fps.tick(self.pixel_size)
@@ -168,12 +215,14 @@ class SnakeGame:
         """Update the game status."""
         if (
             self.snake_position[0] < self.board_padding
-            or self.snake_position[0] > self.board_size + self.board_padding - self.pixel_size
+            or self.snake_position[0]
+            > self.board_size + self.board_padding - self.pixel_size
         ):
             self.done = True
         if (
             self.snake_position[1] < self.title_box_size[1] + self.board_padding
-            or self.snake_position[1] > self.board_size + self.title_box_size[1] - self.pixel_size
+            or self.snake_position[1]
+            > self.board_size + self.title_box_size[1] - self.pixel_size
         ):
             self.done = True
         if self.snake_position in self.snake_body[1:]:
