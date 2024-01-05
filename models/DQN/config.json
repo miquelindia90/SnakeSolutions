@@ -1,0 +1,13 @@
+{
+    "model_name": "DQN",
+    "board_size": 150,
+    "hidden_size": 100,
+    "learning_rate": 0.0001,
+    "max_episodes": 1000000,
+    "batch_size": 20,
+    "gamma": 0.95,
+    "initial_epsilon": 0.5,
+    "target_epsilon": 0.01,
+    "epsilon_converge_ratio": 0.3333333333333333,
+    "buffer_size": 5000
+}
