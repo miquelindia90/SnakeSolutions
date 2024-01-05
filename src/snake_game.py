@@ -15,7 +15,7 @@ class SnakeGame:
         self.board_padding = 10
         self.display = display
         self.pixel_size = 10
-        self.title_box_size = [max(self.board_size, 100), 40]
+        self.title_box_size = [self.board_size, 40]
         self._init_game()
 
     def _init_game(self):
