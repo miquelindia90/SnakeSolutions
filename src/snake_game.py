@@ -6,7 +6,7 @@ import pygame
 class SnakeGame:
     """Snake Game."""
 
-    def __init__(self, board_size: int = 200, display: bool = False):
+    def __init__(self, board_size: int = 300, display: bool = False):
         """Initialize the Snake Game.
         Args: board_size (int): Size of the board
               display (bool): Display the game
@@ -65,7 +65,7 @@ class SnakeGame:
         """Update the position of the food."""
         valid_position = False
         while not valid_position:
-            x_random_position = random.randint(self.board_padding//10, (self.board_size + self.board_padding) // 10 - 1) * 10
+            x_random_position = random.randint(self.board_padding//10, (self.board_size) // 10 - 1) * 10
             y_random_position = random.randint((self.title_box_size[1] + self.board_padding)//10, (self.board_size + self.title_box_size[1]) // 10 - 1) * 10
             self.food_position = [x_random_position, y_random_position]
             if self.food_position not in self.snake_body:
