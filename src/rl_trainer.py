@@ -272,8 +272,9 @@ class RlTrainer:
         for _ in range(games):
             states = self.env.reset()
             done = False
-            self.env.render()
-            time.sleep(0.5)
+            if display:
+                self.env.render()
+                time.sleep(0.5)
             while not done:
                 action, _ = self._sample_action(states)
                 states, _, score, _, done = self.env.step(action)
