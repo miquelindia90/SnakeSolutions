@@ -1,6 +1,7 @@
 import os
 import random
 import math
+import time
 
 import matplotlib.pyplot as plt
 import torch
@@ -271,6 +272,8 @@ class RlTrainer:
         for _ in range(games):
             states = self.env.reset()
             done = False
+            self.env.render()
+            time.sleep(0.5)
             while not done:
                 action, _ = self._sample_action(states)
                 states, _, score, _, done = self.env.step(action)
