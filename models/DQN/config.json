@@ -1,5 +1,5 @@
 {
-    "model_name": "DQN-300",
+    "model_name": "DQN",
     "board_size": 300,
     "hidden_size": 100,
     "learning_rate": 0.0001,
