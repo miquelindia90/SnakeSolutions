@@ -131,7 +131,7 @@ The following table shows the performance metrics of the different Snake AI mode
 
 | Model | Average Score | Max Score |
 |-------|---------------|-----------|
-| DQN   | 13.384        | 35        |
+| DQN   | 18.88         | 52        |
 | DDQN  | 0             | 0         |
 
-The results were obtained after playing 1000 games in a 150 border game.
+The results were obtained after playing 1000 games in a 300 border size game.

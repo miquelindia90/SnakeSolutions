@@ -15,7 +15,7 @@ def load_json_config(file_name: str) -> dict:
 def main(model_name: str) -> None:
     """Main function."""
     parameters = load_json_config("models/" + model_name + "/config.json")
-    env = SnakeEnv(board_size=parameters["board_size"], display=True)
+    env = SnakeEnv(board_size=parameters["board_size"], display=False)
     dnn = DNN(4, parameters["hidden_size"])
     trainer = RlTrainer(env=env, dnn=dnn, parameters=parameters)
     trainer.test(games=1000, display=False)
