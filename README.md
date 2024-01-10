@@ -8,7 +8,7 @@ This repository comprises a collection of reinforcement learning-based solutions
 
 ## Installation
 
-To install the required dependencies for SnakeSolutions, you can use pip. Make sure you have Python and pip installed on your system.
+To install the required dependencies for the repository, you can use pip. Make sure you have Python3.10 and pip installed on your system.
 
 1. Open a terminal or command prompt.
 2. Navigate to the root directory of the SnakeSolutions project.
