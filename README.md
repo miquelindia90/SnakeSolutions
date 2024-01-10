@@ -3,7 +3,9 @@
 SnakeSolutions is a reinforcement learning-based solution for the Snake Game.
 It uses RL algorithms to train an agent to play the game and achieve high scores.
 
-![Snake_Demo](./models/DQN/video.gif)
+<p align="center">
+  <img src="./models/DQN/video.gif" alt="Snake_Demo" width="300" height="300">
+</p>
 
 ## Installation
 
