@@ -24,7 +24,7 @@ Once the installation is complete, you can proceed with running the SnakeSolutio
 
 ## Playing the Snake Game
 
-To play the Snake Game manually, you can use the `play_snake.py` script provided in the SnakeSolutions project.
+To play the Snake Game manually, you can use the provided `play_snake.py` script.
 
 1. Make sure you have completed the installation steps mentioned above.
 
@@ -41,8 +41,6 @@ To play the Snake Game manually, you can use the `play_snake.py` script provided
     This command will launch the Snake Game interface, allowing you to control the snake using the arrow keys.
 
 5. Enjoy playing the Snake Game and try to achieve the highest score!
-
-Note: Make sure you have the necessary dependencies installed before running the play script.
 
 
 ## Training the Snake AI
