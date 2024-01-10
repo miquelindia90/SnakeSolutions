@@ -3,6 +3,8 @@
 SnakeSolutions is a reinforcement learning-based solution for the Snake Game.
 It uses RL algorithms to train an agent to play the game and achieve high scores.
 
+![Snake_Demo](./models/DQN/video.gif)
+
 ## Installation
 
 To install the required dependencies for SnakeSolutions, you can use pip. Make sure you have Python and pip installed on your system.
