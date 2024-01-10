@@ -1,7 +1,6 @@
 # SnakeSolutions
 
-SnakeSolutions is a reinforcement learning-based solution for the Snake Game.
-It uses RL algorithms to train an agent to play the game and achieve high scores.
+This repository comprises a collection of reinforcement learning-based solutions for the vanilla Snake Game and other game variations. Using mainly pygame, openAI gym, and PyTorch, this project aims to provide a platform for experimenting with different reinforcement learning algorithms and game environments.
 
 <p align="center">
   <img src="./models/DQN/video.gif" alt="Snake_Demo" width="400" height="400">
