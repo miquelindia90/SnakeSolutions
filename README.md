@@ -65,7 +65,7 @@ To train the Snake AI models, you can use the `train_snake_IA.py` script.
 5. Wait for the training process to complete. The duration may vary depending on the complexity of the training settings and the hardware resources available. It may take several hours to train the AI models using the default settings. If you want to have more information about the training progress, the metrics.png file in the models folder will show several training metrics.
 
 <p align="center">
-  <img src="./models/DQN/metrics.png" alt="Training Metrics" width="800" height="400">
+  <img src="./models/DQN/metrics.png" alt="Training Metrics" width="1000" height="400">
 </p>
 
 Once the training is finished, you can use the trained AI models to play the Snake Game or evaluate their performance.
