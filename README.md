@@ -45,7 +45,7 @@ To play the Snake Game manually, you can use the provided `play_snake.py` script
 
 ## Training the Snake AI
 
-To train the Snake AI models, you can use the `train_snake_IA.py` script provided in the SnakeSolutions project.
+To train the Snake AI models, you can use the `train_snake_IA.py` script.
 
 1. Make sure you have completed the installation steps mentioned above.
 
@@ -59,9 +59,14 @@ To train the Snake AI models, you can use the `train_snake_IA.py` script provide
     python src/train_snake_IA.py
     ```
 
-    This command will initiate the training process and start training the AI models using reinforcement learning algorithms.
+    This command will initiate the training process and start training the AI models using reinforcement learning algorithms. Use the -h flag to have a more detailed description of the available arguments.
+        
 
-5. Wait for the training process to complete. The duration may vary depending on the complexity of the training settings and the hardware resources available.
+5. Wait for the training process to complete. The duration may vary depending on the complexity of the training settings and the hardware resources available. It may take several hours to train the AI models using the default settings. If you want to have more information about the training progress, the metrics.png file in the models folder will show several training metrics.
+
+<p align="center">
+  <img src="./models/DQN/metrics.png" alt="Training Metrics" width="400" height="400">
+</p>
 
 Once the training is finished, you can use the trained AI models to play the Snake Game or evaluate their performance.
 
