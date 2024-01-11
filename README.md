@@ -11,7 +11,7 @@ This repository comprises a collection of reinforcement learning-based solutions
 To install the required dependencies for the repository, you can use pip. Make sure you have Python3.10 and pip installed on your system.
 
 1. Open a terminal or command prompt.
-2. Navigate to the root directory of the SnakeSolutions project.
+2. Navigate to the root directory of the SnakeSolutions repository.
 3. Run the following command to install the requirements:
 
     ```bash
@@ -30,7 +30,7 @@ To play the Snake Game manually, you can use the provided `play_snake.py` script
 
 2. Open a terminal or command prompt.
 
-3. Navigate to the root directory of the SnakeSolutions project.
+3. Navigate to the root directory of the SnakeSolutions repository.
 
 4. Run the following command to start playing the Snake Game:
 
@@ -51,7 +51,7 @@ To train the Snake AI models, you can use the `train_snake_IA.py` script.
 
 2. Open a terminal or command prompt.
 
-3. Navigate to the root directory of the SnakeSolutions project.
+3. Navigate to the root directory of the SnakeSolutions repository.
 
 4. Run the following command to start training the Snake AI models:
 
@@ -72,13 +72,13 @@ Once the training is finished, you can use the trained AI models to play the Sna
 
 ## Evaluate the Snake AI Model
 
-To evaluate the performance of the trained Snake AI models, you can use the `evaluate_snake_IA_model.py` script provided in the SnakeSolutions project.
+To evaluate the performance of the trained Snake AI models, you can use the `evaluate_snake_IA_model.py` script provided in the SnakeSolutions repository.
 
 1. Make sure you have completed the installation steps mentioned above.
 
 2. Open a terminal or command prompt.
 
-3. Navigate to the root directory of the SnakeSolutions project.
+3. Navigate to the root directory of the SnakeSolutions repository.
 
 4. Run the following command to start evaluating the Snake AI model:
 
@@ -103,13 +103,13 @@ Note: Make sure you have the necessary dependencies installed and the model file
 
 ## Testing the Snake AI Model
 
-To test the trained Snake AI models, you can use the `test_snake_IA_model.py` script provided in the SnakeSolutions project.
+To test the trained Snake AI models, you can use the `test_snake_IA_model.py` script provided in the SnakeSolutions repository.
 
 1. Make sure you have completed the installation steps mentioned above.
 
 2. Open a terminal or command prompt.
 
-3. Navigate to the root directory of the SnakeSolutions project.
+3. Navigate to the root directory of the SnakeSolutions repository.
 
 4. Run the following command to start testing the Snake AI model:
 
