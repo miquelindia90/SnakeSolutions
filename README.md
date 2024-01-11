@@ -98,8 +98,6 @@ To evaluate the performance of the trained Snake AI models, you can use the `eva
 
 5. Observe the evaluation results, which may include metrics such as average score, highest score, and game duration.
 
-Note: Make sure you have the necessary dependencies installed and the model file is located in the correct directory before running the evaluation script.
-
 
 ## Testing the Snake AI Model
 
@@ -128,8 +126,6 @@ To test the trained Snake AI models, you can use the `test_snake_IA_model.py` sc
     This command will load the specified model and run the Snake Game using the trained AI model.
 
 5. Observe the Snake Game being played by the AI model and evaluate its performance.
-
-Note: Make sure you have the necessary dependencies installed and the model file is located in the correct directory before running the test script.
 
 ## Models and Results
 
