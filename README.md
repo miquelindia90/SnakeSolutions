@@ -96,7 +96,7 @@ To evaluate the performance of the trained Snake AI models, you can use the `eva
 
     This command will load the specified model and evaluate its performance by running multiple games of Snake using the trained AI model.
 
-5. Observe the evaluation results, which may include metrics such as average score, highest score, and game duration.
+5. Observe the evaluation results, which may include metrics such as average score and highest score.
 
 
 ## Testing the Snake AI Model
