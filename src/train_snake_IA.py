@@ -3,7 +3,7 @@ import json
 import argparse
 
 from snake_env import SnakeEnv
-from dnn import DNN
+from networks.dnn import DNN
 from rl_trainer import RlTrainer
 
 
