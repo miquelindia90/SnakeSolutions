@@ -30,6 +30,7 @@ class DNN(nn.Module):
         food_distance: torch.tensor,
         snake_body_danger: torch.tensor,
         snake_wall_danger: torch.tensor,
+        board_tensor: torch.tensor,
     ) -> torch.tensor:
         """Compute the forward pass.
         Args: direction (torch.tensor): Direction

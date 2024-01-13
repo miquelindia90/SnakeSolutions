@@ -17,7 +17,11 @@ class SnakeEnv(gym.Env):
         self.board_size = board_size
         self.score = 0
         self.game = SnakeGame(board_size=board_size, display=display)
+        self.surface_dimensions = self.game.get_surface_dimensions()
         self.action_space = gym.spaces.Discrete(4)
+        
+    def get_surface_dimensions(self):
+        return self.surface_dimensions
 
     def _compute_reward(
         self, score: int, done: bool, snake_position: list, food_position: list
@@ -72,6 +76,17 @@ class SnakeEnv(gym.Env):
         elif snake_position[1] == self.board_size:
             danger[1] = 1
         return np.array(danger)
+    
+    def __get_board_tensor(self, snake_body: list, food_position: list) -> np.array:
+        """
+        Get the 3D tensor representing the game board.
+        """
+        board_tensor = np.zeros((2, self.surface_dimensions[0], self.surface_dimensions[1]))
+        for body_part in snake_body:
+            board_tensor[0, body_part[0]-1, body_part[1]-1] = 1
+        board_tensor[1, food_position[0], food_position[1]] = 1
+
+        return board_tensor
 
     def _calculate_states(self):
         snake_position, snake_body, food_position = self.game.get_elements_space()
@@ -93,7 +108,8 @@ class SnakeEnv(gym.Env):
         )
         snake_direction_danger = self._get_snake_body_danger(snake_position, snake_body)
         snake_wall_danger = self._get_snake_wall_danger(snake_position)
-        return snake_direction, food_distance, snake_direction_danger, snake_wall_danger
+        board_tensor = self.__get_board_tensor(snake_body, food_position)
+        return snake_direction, food_distance, snake_direction_danger, snake_wall_danger, board_tensor
 
     def reset(self):
         """Reset the environment.
