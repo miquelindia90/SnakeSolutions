@@ -100,16 +100,18 @@ class RlTrainer:
         Args: states (list): List of states
         Returns: tuple[int, torch.Tensor]: Action and the DNN logits
         """
-        snake_direction, food_distance, snake_body_danger, snake_wall_danger = states
+        snake_direction, food_distance, snake_body_danger, snake_wall_danger, board_tensor = states
         snake_direction_tensor = torch.tensor(snake_direction).float().unsqueeze(0)
         food_distance_tensor = torch.tensor(food_distance).float().unsqueeze(0)
         snake_body_danger_tensor = torch.tensor(snake_body_danger).float().unsqueeze(0)
         snake_wall_danger_tensor = torch.tensor(snake_wall_danger).float().unsqueeze(0)
+        board_tensor = torch.tensor(board_tensor).float().unsqueeze(0)
         dnn_logits = self.dnn(
             snake_direction_tensor,
             food_distance_tensor,
             snake_body_danger_tensor,
             snake_wall_danger_tensor,
+            board_tensor,
         )
         action = (
             torch.argmax(dnn_logits).item()
