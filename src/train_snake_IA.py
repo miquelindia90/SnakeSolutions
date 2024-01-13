@@ -24,7 +24,10 @@ def main(parameters: dict) -> None:
     _init_model_folders(parameters["model_name"])
     _save_config_data(parameters["model_name"], parameters)
     env = SnakeEnv(board_size=parameters["board_size"])
-    dnn = CNN(env.get_surface_dimensions(), 4, parameters["hidden_size"])
+    if parameters["network"] == "DNN":
+        dnn = DNN(4, parameters["hidden_size"])
+    elif parameters["network"] == "CNN":
+        dnn = CNN(env.get_surface_dimensions(), 4, parameters["hidden_size"])
     trainer = RlTrainer(env=env, dnn=dnn, parameters=parameters)
     trainer.train()
 
@@ -42,6 +45,9 @@ if __name__ == "__main__":
     parser.add_argument("--board_size", type=int, default=150, help="Size of the board")
 
     # DNN Configuration
+    parser.add_argument(
+        "--network", type=str, default="CNN", choices = ["DNN", "CNN"], help="Size of the hidden layer"
+    )
     parser.add_argument(
         "--hidden_size", type=int, default=100, help="Size of the hidden layer"
     )
