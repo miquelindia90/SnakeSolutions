@@ -17,7 +17,11 @@ class SnakeEnv(gym.Env):
         self.board_size = board_size
         self.score = 0
         self.game = SnakeGame(board_size=board_size, display=display)
+        self.surface_dimensions = self.game.get_surface_dimensions()
         self.action_space = gym.spaces.Discrete(4)
+        
+    def get_surface_dimensions(self):
+        return self.surface_dimensions
 
     def _compute_reward(
         self, score: int, done: bool, snake_position: list, food_position: list
@@ -77,9 +81,9 @@ class SnakeEnv(gym.Env):
         """
         Get the 3D tensor representing the game board.
         """
-        board_tensor = np.zeros((2, self.board_size, self.board_size))
+        board_tensor = np.zeros((2, self.surface_dimensions[0], self.surface_dimensions[1]))
         for body_part in snake_body:
-            board_tensor[0, body_part[0], body_part[1]] = 1
+            board_tensor[0, body_part[0]-1, body_part[1]-1] = 1
         board_tensor[1, food_position[0], food_position[1]] = 1
 
         return board_tensor

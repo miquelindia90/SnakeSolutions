@@ -16,6 +16,7 @@ class SnakeGame:
         self.display = display
         self.pixel_size = 10
         self.title_box_size = [self.board_size, self.board_size // 10]
+        self.game_surface_dimensions = [self.title_box_size[0] + self.board_padding, self.board_size + self.title_box_size[1] + self.board_padding]
         self._init_game()
 
     def _init_game(self):
@@ -30,13 +31,16 @@ class SnakeGame:
         self._init_elements()
         self._init_score()
 
+    def get_surface_dimensions(self):
+        return self.game_surface_dimensions
+
     def _init_board(self):
         """Initialize the board."""
         pygame.init()
         self.game_surface = pygame.display.set_mode(
             (
-                self.title_box_size[0] + self.board_padding,
-                self.board_size + self.title_box_size[1] + self.board_padding,
+                self.game_surface_dimensions[0],
+                self.game_surface_dimensions[1],
             )
         )
         self.fps = pygame.time.Clock()
