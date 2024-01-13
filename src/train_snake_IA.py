@@ -4,6 +4,7 @@ import argparse
 
 from snake_env import SnakeEnv
 from networks.dnn import DNN
+from networks.cnn import CNN
 from rl_trainer import RlTrainer
 
 
@@ -23,7 +24,7 @@ def main(parameters: dict) -> None:
     _init_model_folders(parameters["model_name"])
     _save_config_data(parameters["model_name"], parameters)
     env = SnakeEnv(board_size=parameters["board_size"])
-    dnn = DNN(4, parameters["hidden_size"])
+    dnn = CNN(env.get_surface_dimensions(), 4, parameters["hidden_size"])
     trainer = RlTrainer(env=env, dnn=dnn, parameters=parameters)
     trainer.train()
 
