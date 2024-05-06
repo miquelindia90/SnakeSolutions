@@ -7,6 +7,7 @@
     "batch_size": 20,
     "gamma": 0.95,
     "initial_epsilon": 0.5,
+    "network": "DNN",
     "target_epsilon": 0.01,
     "epsilon_converge_ratio": 0.3333333333333333,
     "buffer_size": 5000
