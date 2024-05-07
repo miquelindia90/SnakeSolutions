@@ -46,7 +46,11 @@ if __name__ == "__main__":
 
     # DNN Configuration
     parser.add_argument(
-        "--network", type=str, default="CNN", choices = ["DNN", "CNN"], help="Size of the hidden layer"
+        "--network",
+        type=str,
+        default="CNN",
+        choices=["DNN", "CNN"],
+        help="Size of the hidden layer",
     )
     parser.add_argument(
         "--hidden_size", type=int, default=100, help="Size of the hidden layer"
