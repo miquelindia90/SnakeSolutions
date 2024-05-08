@@ -17,7 +17,7 @@ class DNN(nn.Module):
         self.hidden_size = hidden_size
         self._init_layers()
 
-    def _init_layers(self):
+    def _init_layers(self) -> None:
         """Initialize the layers."""
         self.fc1 = nn.Linear(self.input_size, self.hidden_size)
         self.fc2 = nn.Linear(self.hidden_size, self.hidden_size)
